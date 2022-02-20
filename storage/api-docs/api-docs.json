@@ -1,0 +1,126 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "教务系统",
+        "description": "教务系统接口文档",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "organization/roles": {
+            "get": {
+                "tags": [
+                    "组织机构-角色及权限"
+                ],
+                "summary": "角色列表",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::index",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "查询信息"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "页数"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "排序"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "description": "名称",
+                                                                "type": "string"
+                                                            },
+                                                            "describe": {
+                                                                "description": "描述",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
