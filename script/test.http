@@ -1,0 +1,62 @@
+@baseUrl = http://127.0.0.1:8000/api
+# @token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImM3NzBiNTIwYWVmNzM1ZmUwN2RiMmUwMmUxNmFmMTA2OTBjNzNlY2ExZWM4YzI5MDM2YWU3NTc2N2VjZDE3ZDFkNDU0YjQ3NDk2N2YyYmFmIn0.eyJhdWQiOiIxIiwianRpIjoiYzc3MGI1MjBhZWY3MzVmZTA3ZGIyZTAyZTE2YWYxMDY5MGM3M2VjYTFlYzhjMjkwMzZhZTc1NzY3ZWNkMTdkMWQ0NTRiNDc0OTY3ZjJiYWYiLCJpYXQiOjE2NDU0MzEwNjcsIm5iZiI6MTY0NTQzMTA2NywiZXhwIjoxNjc2OTY3MDY3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.hWdf4OTCRJrmADZHOE2HKLfyDN0dzrcGu35cPehFe_7RFxUM-dPLTR6krUAUf5emTpH6GTQnAOtxBjwaovChKCAjzFE5dWDkPCRBF98J3ns19t-_UOrzD11KYM5mxnVCCre2agsBawE4_fvfkntdbhGQT4j2g70eQCsucQ4NWZeoLueppFzRhuOS_eb2Ee0pG3izU_KwtGJiJ6UfhVhIIGNjs8-GW8Fiw3zecvv9G9U2ljqv4qUcKPBqpEB2Ueg9xm4_AGQDvQ7fG4PZg5LhUvNiqNl1JjLpfPnKX3AvXPB2QiChgnGuCSO41rx_0aLBfL0ZLudhuzX2mx58UW3JW9SoFOpdABxlk8nwcKFHVirZ7TMk1_iLzDaiTnFVl_Mil7ObLGcxixGe5w0tXq3diArxaerd5fPdRgBQqAol3wYaFj-EcH-MiARWVlW9Vo5fyRQR9fQq29vgQwRDlW6JNgaUkNE0HdArQ0P1by_zliNdKMexPP1GontTEQWi-JvCmSvPrurYoD6kw_8gxW0_b2IdODlNwCadvl8L37X_UWlgWuh_lgTL0wP0-dZpDi6zCOCzCPf2o8ppjxijUrVdSAZsvOM_YjYNsgC8YgOXcBDTZWNv8Rztd1RaeZoXkivCzQ3mHSFsoDpNU3jaPtuIxZSZ1TiWf7X_c-JZDfo83PU
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImY1MjZlYWE4NmE4OTQ2ZTFkOWIzYWFkODMxNzk3MzhjMzZiM2YxMWQzNmM5MGNhMmMwYzA2M2Y0NjZiZWEyYzI5NjE0ZTJjMzczYTUzNjYwIn0.eyJhdWQiOiIxIiwianRpIjoiZjUyNmVhYTg2YTg5NDZlMWQ5YjNhYWQ4MzE3OTczOGMzNmIzZjExZDM2YzkwY2EyYzBjMDYzZjQ2NmJlYTJjMjk2MTRlMmMzNzNhNTM2NjAiLCJpYXQiOjE2NDU0MzYyNTYsIm5iZiI6MTY0NTQzNjI1NiwiZXhwIjoxNjc2OTcyMjU2LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.e7cg-8I-kDHTdaK7HPZ9QIV4mBw1e9T-SvoxFah4PDg6khJTFVIE9mPFbGvjB-6UteAGWnjHdYEJbaDxa7JKoAForYYvWDF8XtYeezsTh2FojwzMLATZkLmLTacB8-Vm-3XRLyp0K4L5JqafSTl1Ofb7A_L5wHzxmGXqfLWcEv-lI_wgGlv0aVVFmAb_tQj_Ydk5YVdFNi2FP9N5nr-lKQsx6VIh42vnemcuj6qUo10-gjfT8TIz4A9K-n3Pr1r61IYfoJRq1JxfpAt9aPz0rgL73EQ5SSLjU8ZwZsgkqqOypja5rzytQ2P87orQJ59U_RxW8HoAedY9mBW-HEFwUBTsbPyl6xuyXhQHw94M2NKU2S04-5mL1beD0mqzSYkyYo-eI6QzcnE--NUwQEyjqrLW83uQalr4_al8AjUC3NNeKpOXCL_cEMeIzcvqXXmXNA1dV8anxEGDSJ9BAT9KKk2KNSuoSTBcJi1KYSS7NouMD5H5BDOB9YpXaQUZQgF29_0rxlBjWHJWztkiWu_3NHaSvtf6JXeg36L7sWz67j_mABoZrwzCnhT11L9BGFvTYCOLZqI0yKqx3TuzuDjVjmrz6HIYyWTIlkMQPxLuS7ZqTIOTTIsxRpTi-hxRWaIMfSIhFzvL17pkM-Hve0jC2mrCotLL_QDte3O_gwbsQg4
+
+### 登录
+POST {{baseUrl}}/login-in
+Accept: application/json
+content-type: application/json
+
+# {
+#   "username": "test@qq.com",
+#   "password": "123456",
+#   "type": "teacher"
+# }
+
+{
+  "username": "test1",
+  "password": "123456",
+  "type": "student"
+}
+
+### 老师注册
+POST {{baseUrl}}/register
+Accept: application/json
+content-type: application/json
+
+{
+  "name": "test1",
+  "email": "test@qq.com",
+  "password": "123456"
+}
+
+### 新增学生
+POST {{baseUrl}}/students
+Accept: application/json
+content-type: application/json
+
+{
+  "name": "test1",
+  "password": "123456",
+  "school_id": 1
+}
+
+### test-token
+GET {{baseUrl}}/test
+Accept: application/json
+content-type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 1
+}
+
+### test-token2
+GET {{baseUrl}}/test2
+Accept: application/json
+content-type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 1
+}

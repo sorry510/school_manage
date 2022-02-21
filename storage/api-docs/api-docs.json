@@ -6,18 +6,196 @@
         "version": "1.0.0"
     },
     "paths": {
-        "organization/roles": {
+        "/api/login-in": {
+            "post": {
+                "tags": [
+                    "用户认证"
+                ],
+                "summary": "用户登录",
+                "operationId": "App\\Http\\Controllers\\Login\\LoginController::loginIn",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "description": "用户名",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "密码",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "类型[1:教师,2:学生]",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "token": {
+                                                    "description": "用户token",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login-out": {
+            "delete": {
+                "tags": [
+                    "用户认证"
+                ],
+                "summary": "退出登录",
+                "operationId": "App\\Http\\Controllers\\Login\\LoginController::loginOut",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "用户认证"
+                ],
+                "summary": "教师注册",
+                "operationId": "App\\Http\\Controllers\\Login\\LoginController::registerTeacher",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "description": "用户名",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "密码",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "type": "object"
+                                        },
+                                        "extra": {
+                                            "description": "返回额外数据",
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teacher/schools": {
             "get": {
                 "tags": [
-                    "组织机构-角色及权限"
+                    "教师"
                 ],
-                "summary": "角色列表",
-                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::index",
+                "summary": "学校列表",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::getSchoolList",
                 "parameters": [
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "查询信息"
+                        "description": "查询信息(学校名称)"
                     },
                     {
                         "name": "page",
@@ -28,11 +206,6 @@
                         "name": "limit",
                         "in": "query",
                         "description": "每页数量"
-                    },
-                    {
-                        "name": "sort",
-                        "in": "query",
-                        "description": "排序"
                     }
                 ],
                 "responses": {
@@ -95,11 +268,19 @@
                                                                 "type": "integer"
                                                             },
                                                             "name": {
-                                                                "description": "名称",
+                                                                "description": "学校名称",
                                                                 "type": "string"
                                                             },
-                                                            "describe": {
-                                                                "description": "描述",
+                                                            "remark": {
+                                                                "description": "备注",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            },
+                                                            "updated_at": {
+                                                                "description": "更新时间",
                                                                 "type": "string"
                                                             }
                                                         },
@@ -107,6 +288,126 @@
                                                     }
                                                 }
                                             },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "申请学校",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::applySchool",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "学校名称",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teacher/students": {
+            "post": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "添加学生",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::addStudent",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "姓名",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "school_id": {
+                                        "description": "学校名称",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
                                             "type": "object"
                                         },
                                         "timestamp": {
