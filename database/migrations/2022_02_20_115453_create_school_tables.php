@@ -28,7 +28,7 @@ class CreateSchoolTables extends Migration
             $table->increments('id');
             $table->string('name', 50)->index()->comment('名称');
             $table->string('teacher_id', 255)->nullable()->comment('备注');
-            $table->integer('status')->default(2)->comment('状态[1:已成功,2:被拒绝,3:进行中]');
+            $table->integer('status')->default(3)->comment('状态[1:已成功,2:被拒绝,3:进行中]');
             $table->dateTime('created_at')->nullable()->comment('创建时间');
             $table->dateTime('updated_at')->nullable()->comment('更新时间');
         });

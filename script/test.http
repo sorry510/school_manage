@@ -25,8 +25,8 @@ Accept: application/json
 content-type: application/json
 
 {
-  "name": "test1",
-  "email": "test@qq.com",
+  "name": "test3",
+  "email": "test3@qq.com",
   "password": "123456"
 }
 

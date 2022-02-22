@@ -13,6 +13,9 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-    $router->get('/example', 'ExampleController@index')->name('example');
 
+    $router->resource('schools', SchoolController::class);
+    $router->resource('school-applies', SchoolApplyController::class);
+    $router->resource('teachers', TeacherController::class);
+    $router->resource('students', StudentController::class);
 });

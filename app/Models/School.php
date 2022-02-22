@@ -9,4 +9,14 @@ class School extends Base
     use SoftDeletes;
 
     protected $table = 'school';
+
+    public function schoolTeachers()
+    {
+        return $this->hasMany(SchoolTeacher::class, 'school_id');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'school_id');
+    }
 }
