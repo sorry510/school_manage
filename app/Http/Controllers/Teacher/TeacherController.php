@@ -61,8 +61,8 @@ class TeacherController extends Controller
     /**
      * @OA\get(
      *     tags={"教师"},
-     *     path="/api/teacher/schools/apply",
-     *     summary="学校列表",
+     *     path="/api/teacher/schools-apply",
+     *     summary="申请的学校列表",
      *     @OA\Parameter(name="search", in="query", description="查询信息(学校名称)"),
      *     @OA\Parameter(name="page", in="query", description="页数"),
      *     @OA\Parameter(name="limit", in="query", description="每页数量"),
@@ -185,7 +185,11 @@ class TeacherController extends Controller
     public function inviteTeacher(Request $request)
     {
         $params = $request->only("teacher_id", "school_id");
+        $user = $request->user('teacher');
         try {
+            if (!SchoolTeacher::getAdminInfo($user->id, $params['school_id'])) {
+                $this->resJson(ErrorCode::NO_AUTH);
+            }
             $school = School::where('id', $params['school_id'])->value('name');
             $email = Teacher::where('id', $params['teacher_id'])->value('email');
             if ($email && $school) {
@@ -210,6 +214,22 @@ class TeacherController extends Controller
         }
     }
 
+    /**
+     * @OA\get(
+     *     tags={"教师"},
+     *     path="/api/teacher/accept",
+     *     summary="接受邀请",
+     *     @OA\Parameter(name="teacher_id", in="query", description="学校id"),
+     *     @OA\Parameter(name="school_id", in="query", description="学校id"),
+     *     @OA\Parameter(name="secret", in="query", description="学校id"),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="信息"),
+     *         @OA\Property(property="data", type="object", description="返回数据"),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳")
+     *     ))
+     * )
+     */
     public function acceptInvitation(Request $request)
     {
         $params = $request->only("teacher_id", "school_id", "secret");
@@ -321,8 +341,11 @@ class TeacherController extends Controller
     public function addStudent(Request $request)
     {
         $params = $request->only("name", "account", "password", "school_id");
+        $user = $request->user('teacher');
         try {
-
+            if (!SchoolTeacher::getAdminInfo($user->id, $params['school_id'])) {
+                $this->resJson(ErrorCode::NO_AUTH);
+            }
             $data = [
                 "name" => $params['name'],
                 "account" => $params['account'],
@@ -330,8 +353,8 @@ class TeacherController extends Controller
                 "password" => Hash::make($params['password']),
             ];
             // 写入用户表
-            $user = Student::create($data);
-            return $this->resJson(ErrorCode::SUCCESS, $user);
+            $student = Student::create($data);
+            return $this->resJson(ErrorCode::SUCCESS, $student);
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
         }

@@ -50,4 +50,9 @@ class ErrorCode
      * @Message("数据不存在")
      */
     const DATA_NO_EXIST = 1001;
+
+    /**
+     * @Message("操作重复")
+     */
+    const REPEAT_OPERATION = 1002;
 }

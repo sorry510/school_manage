@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Teacher;
+namespace App\Http\Controllers\Student;
 
 use App\Constants\ErrorCode;
 use App\Http\Controllers\Controller;
-use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class IndexController extends Controller

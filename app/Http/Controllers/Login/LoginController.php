@@ -89,7 +89,7 @@ class LoginController extends Controller
         $user->online = 1;
         $user->save();
         $token = $user->createToken($data["type"]);
-        return [ErrorCode::SUCCESS, ['token' => $token->accessToken]];
+        return [ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => 'teacher']];
     }
 
     protected function loginStudent($data)
@@ -117,7 +117,7 @@ class LoginController extends Controller
         $user->online = 1;
         $user->save();
         $token = $user->createToken($data["type"]);
-        return [ErrorCode::SUCCESS, ['token' => $token->accessToken]];
+        return [ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => 'student']];
     }
 
     /**
