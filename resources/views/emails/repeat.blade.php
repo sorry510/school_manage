@@ -6,10 +6,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>mail</title>
+        <style>
+            .content {
+                text-align: center;
+                font-size: 40px;
+                margin-top: 30px;
+            }
+        </style>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-          <a href="{{$url}}">诚挚邀请您加入{{$school}}学校成为我校教师，如果同意请点击链接</a>
+        <div class="content">
+         ！！！您已是我校教师，不能重复加入！！！
         </div>
     </body>
 </html>

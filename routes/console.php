@@ -2,6 +2,7 @@
 
 use App\Mail\TeacherInvitationMail;
 use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,10 @@ Artisan::command('test', function () {
 Artisan::command('mail', function () {
     \Mail::to('491559675@qq.com')->send(new TeacherInvitationMail());
 })->describe('mail test');
+
+Artisan::command('pwd {password}', function ($password) {
+    $hash = Hash::make($password);
+    echo $hash;
+    $result = Hash::check($password, $hash);
+    dd($result);
+})->describe('password');

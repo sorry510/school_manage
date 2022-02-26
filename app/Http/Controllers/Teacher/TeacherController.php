@@ -9,10 +9,11 @@ use App\Models\School;
 use App\Models\SchoolApply;
 use App\Models\SchoolTeacher;
 use App\Models\Student;
+use App\Models\StudentTeacherLike;
+use App\Models\StudentTeacherMessage;
 use App\Models\Teacher;
 use App\Models\TeacherMail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Sorry510\Annotations\RequestParam;
 
 class TeacherController extends Controller
@@ -45,13 +46,37 @@ class TeacherController extends Controller
         $params = $request->only("name");
         $user = $request->user("teachers");
         try {
-
             $data = [
                 "name" => $params['name'],
                 "teacher_id" => $user->id,
                 "status" => SchoolApply::STATUS_PENDING, // [1:已成功,2:被拒绝,3:进行中]
             ];
             $result = SchoolApply::create($data);
+            return $this->resJson(ErrorCode::SUCCESS, $result);
+        } catch (\Throwable $e) {
+            return $this->resJson(ErrorCode::ERROR, $e->getMessage());
+        }
+    }
+
+    /**
+     * @OA\delete(
+     *     tags={"教师"},
+     *     path="/api/teacher/schools/{id}",
+     *     summary="取消申请学校",
+     *     @OA\Parameter(name="id", in="path", description="唯一标识", required=true),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="信息"),
+     *         @OA\Property(property="data", type="object", description="返回数据"),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳")
+     *     ))
+     * )
+     */
+    public function cancelApplySchool(Request $request, $id)
+    {
+        $user = $request->user("teachers");
+        try {
+            $result = SchoolApply::where('id', $id)->where('teacher_id', $user->id)->delete();
             return $this->resJson(ErrorCode::SUCCESS, $result);
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
@@ -97,7 +122,9 @@ class TeacherController extends Controller
         $params = $request->only("search", "limit");
         $user = $request->user("teachers");
         try {
-            $query = SchoolApply::select('id', 'name', 'status')->where('teacher_id', $user->id);
+            $query = SchoolApply::select('id', 'name', 'status', 'created_at')
+                ->where('teacher_id', $user->id)
+                ->orderBy('id', 'desc');
             if (is_effective($params, 'search')) {
                 $query->where('name', 'like', "%{$params["search"]}%");
             }
@@ -132,7 +159,13 @@ class TeacherController extends Controller
      *                 @OA\Property(property="name", type="string", description="学校名称"),
      *                 @OA\Property(property="remark", type="string", description="备注"),
      *                 @OA\Property(property="created_at", type="string", description="创建时间"),
-     *                 @OA\Property(property="updated_at", type="string", description="更新时间")
+     *                 @OA\Property(property="isAdmin", type="integer", description="是管理员[0:否,1:是]"),
+     *                 @OA\Property(property="teachers", type="array", description="教师列表", @OA\Items(type="object",
+     *                      @OA\Property(property="id", type="integer", description="教师id]"),
+     *                      @OA\Property(property="name", type="string", description="姓名]"),
+     *                      @OA\Property(property="email", type="string", description="邮箱]"),
+     *                      @OA\Property(property="type", type="string", description="角色]")
+     *                 ))
      *             ))
      *         ),
      *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳"),
@@ -148,11 +181,28 @@ class TeacherController extends Controller
         $user = $request->user("teachers");
         try {
             $schoolIds = SchoolTeacher::where('teacher_id', $user->id)->pluck('school_id');
-            $query = School::whereIn('id', $schoolIds);
+            $query = School::whereIn('id', $schoolIds)->orderBy('id', 'desc');
             if (is_effective($params, 'search')) {
                 $query->where('name', 'like', "%{$params["search"]}%");
             }
             $result = $query->paginate($params["limit"]);
+            $result->each(function ($item) use ($user) {
+                $teachers = SchoolTeacher::getSchoolTeachers($item->id);
+                $isAdmin = 0; // 不是管理员
+                $data = $teachers->map(function ($teacher) use ($user, &$isAdmin) {
+                    if ($teacher->teacher_type === SchoolTeacher::TYPE_ADMIN && $teacher->id === $user->id) {
+                        $isAdmin = 1; // 是管理员
+                    }
+                    return [
+                        'id' => $teacher->id,
+                        'name' => $teacher->name,
+                        'email' => $teacher->email,
+                        'type' => SchoolTeacher::TYPE_TEXTS[$teacher->teacher_type],
+                    ];
+                })->all();
+                $item->teachers = $data;
+                $item->isAdmin = $isAdmin;
+            });
             return $this->resJson(ErrorCode::SUCCESS, $result);
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
@@ -185,10 +235,13 @@ class TeacherController extends Controller
     public function inviteTeacher(Request $request)
     {
         $params = $request->only("teacher_id", "school_id");
-        $user = $request->user('teacher');
+        $user = $request->user('teachers');
         try {
             if (!SchoolTeacher::getAdminInfo($user->id, $params['school_id'])) {
-                $this->resJson(ErrorCode::NO_AUTH);
+                return $this->resJson(ErrorCode::NO_AUTH);
+            }
+            if (SchoolTeacher::where('teacher_id', $params['teacher_id'])->where('school_id', $params['school_id'])->first()) {
+                return $this->resJson(ErrorCode::REPEAT_OPERATION, '已是学校教师，无需邀请');
             }
             $school = School::where('id', $params['school_id'])->value('name');
             $email = Teacher::where('id', $params['teacher_id'])->value('email');
@@ -208,7 +261,7 @@ class TeacherController extends Controller
                 ]));
                 return $this->resJson(ErrorCode::SUCCESS);
             }
-            $this->resJson(ErrorCode::ERROR);
+            return $this->resJson(ErrorCode::ERROR);
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
         }
@@ -244,16 +297,50 @@ class TeacherController extends Controller
                         'school_id' => $params['school_id'],
                         'teacher_type' => SchoolTeacher::TYPE_NORMAL,
                     ]);
-                    return view('welcome');
+                    return view('emails.success');
                 } else {
                     // 已经邀请过了，不能重复邀请
-                    return view('welcome');
+                    return view('emails.repeat');
                 }
             }
             // 验证是伪造
-            return view('welcome');
+            return view('emails.failed');
         } catch (\Throwable $e) {
-            return view('404');
+            return view('emails.failed');
+        }
+    }
+
+    /**
+     * @OA\get(
+     *     tags={"教师"},
+     *     path="/api/teacher/teachers-invitation",
+     *     summary="可以邀请的教师列表",
+     *     @OA\Parameter(name="school_id", in="query", description="学校id"),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="错误信息"),
+     *         @OA\Property(property="data", type="array", description="数据列表", @OA\Items(type="object",
+     *             @OA\Property(property="id", type="integer", description="唯一标识"),
+     *             @OA\Property(property="name", type="string", description="教师"),
+     *             @OA\Property(property="email", type="string", description="邮箱")
+     *         )),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳"),
+     *         required={"code", "message", "data", "timestamp"}
+     *     ))
+     * )
+     */
+    public function getCanInvitationTeacherList(Request $request)
+    {
+        $params = $request->only("school_id");
+        try {
+            $allTeachers = Teacher::select('id', 'name', 'email')->where('status', Teacher::STATUS_ACTIVE)->get();
+            $hasBinds = SchoolTeacher::where('school_id', $params['school_id'])->pluck('id', 'teacher_id'); // [[teacher_id => id]]
+            $teachers = $allTeachers->filter(function ($item) use ($hasBinds) {
+                return !isset($hasBinds[$item->id]);
+            })->values()->all();
+            return $this->resJson(ErrorCode::SUCCESS, $teachers);
+        } catch (\Throwable $e) {
+            return $this->resJson(ErrorCode::ERROR, $e->getMessage());
         }
     }
 
@@ -295,7 +382,9 @@ class TeacherController extends Controller
     {
         $params = $request->only("search", "school_id", "limit");
         try {
-            $query = Teacher::select('id', 'name', 'email', 'created_at');
+            $query = Teacher::select('id', 'name', 'email', 'created_at')
+                ->where('status', Teacher::STATUS_ACTIVE)
+                ->orderBy('id', 'desc');
             if (is_effective($params, 'search')) {
                 $query->where(function ($query) use ($params) {
                     $query->where('name', 'like', "%{$params["search"]}%")
@@ -341,16 +430,20 @@ class TeacherController extends Controller
     public function addStudent(Request $request)
     {
         $params = $request->only("name", "account", "password", "school_id");
-        $user = $request->user('teacher');
+        $user = $request->user('teachers');
         try {
             if (!SchoolTeacher::getAdminInfo($user->id, $params['school_id'])) {
-                $this->resJson(ErrorCode::NO_AUTH);
+                return $this->resJson(ErrorCode::NO_AUTH);
+            }
+            if (Student::where('account', $params['account'])->first()) {
+                return $this->resJson(ErrorCode::REPEAT_OPERATION, '用户名重复');
             }
             $data = [
                 "name" => $params['name'],
                 "account" => $params['account'],
                 "school_id" => $params['school_id'],
-                "password" => Hash::make($params['password']),
+                // "password" => Hash::make($params['password']),
+                "password" => $params['password'],
             ];
             // 写入用户表
             $student = Student::create($data);
@@ -365,7 +458,7 @@ class TeacherController extends Controller
      *     tags={"教师"},
      *     path="/api/teacher/students",
      *     summary="学生列表",
-     *     @OA\Parameter(name="search", in="query", description="查询信息(老师名称，email)"),
+     *     @OA\Parameter(name="search", in="query", description="搜索"),
      *     @OA\Parameter(name="school_id", in="query", description="学校id"),
      *     @OA\Parameter(name="page", in="query", description="页数"),
      *     @OA\Parameter(name="limit", in="query", description="每页数量"),
@@ -382,8 +475,9 @@ class TeacherController extends Controller
      *             ),
      *             @OA\Property(property="list", type="array", description="数据列表", @OA\Items(type="object",
      *                 @OA\Property(property="id", type="integer", description="唯一标识"),
-     *                 @OA\Property(property="name", type="string", description="教师"),
-     *                 @OA\Property(property="email", type="string", description="email"),
+     *                 @OA\Property(property="name", type="string", description="姓名"),
+     *                 @OA\Property(property="school_id", type="string", description="学校id"),
+     *                 @OA\Property(property="online", type="integer", description="是否在线"),
      *                 @OA\Property(property="created_at", type="string", description="创建时间")
      *             ))
      *         ),
@@ -398,7 +492,7 @@ class TeacherController extends Controller
     {
         $params = $request->only("search", "school_id", "limit");
         try {
-            $query = Student::select('id', 'name', 'school_id', 'created_at');
+            $query = Student::select('id', 'name', 'school_id', 'online', 'created_at')->orderBy('id', 'desc');
             if (is_effective($params, 'search')) {
                 $query->where('name', 'like', "%{$params["search"]}%");
             }
@@ -410,5 +504,97 @@ class TeacherController extends Controller
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
         }
+    }
+
+    /**
+     * @OA\get(
+     *     tags={"教师"},
+     *     path="/api/teacher/students-follow",
+     *     summary="我的关注",
+     *     @OA\Parameter(name="search", in="query", description="搜索"),
+     *     @OA\Parameter(name="page", in="query", description="页数"),
+     *     @OA\Parameter(name="limit", in="query", description="每页数量"),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="错误信息"),
+     *         @OA\Property(property="data", type="object", description="返回数据",
+     *             @OA\Property(property="meta", type="object", description="元信息",
+     *                 @OA\Property(property="count", type="integer", description="当前页的项目数"),
+     *                 @OA\Property(property="perPage", type="integer", description="每页显示的项目数"),
+     *                 @OA\Property(property="currentPage", type="integer", description="当前页码"),
+     *                 @OA\Property(property="lastPage", type="integer", description="最后一页的页码"),
+     *                 @OA\Property(property="total", type="integer", description="总数")
+     *             ),
+     *             @OA\Property(property="list", type="array", description="数据列表", @OA\Items(type="object",
+     *                 @OA\Property(property="id", type="integer", description="唯一标识"),
+     *                 @OA\Property(property="name", type="string", description="姓名"),
+     *                 @OA\Property(property="school_id", type="string", description="学校id"),
+     *                 @OA\Property(property="online", type="integer", description="是否在线"),
+     *                 @OA\Property(property="created_at", type="string", description="创建时间")
+     *             ))
+     *         ),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳"),
+     *         required={"code", "message", "data", "timestamp"}
+     *     ))
+     * )
+     *
+     * @RequestParam(fields={"page": 1, "limit": 10 })
+     */
+    public function getFollowStudentList(Request $request)
+    {
+        $params = $request->only("search", "limit");
+        $user = $request->user("teachers");
+        try {
+            $studentIds = StudentTeacherLike::where('teacher_id', $user->id)->pluck('student_id');
+            $query = Student::select('student.id', 'student.name', 'student.online', 'student.created_at', 'school.name as school_name')
+                ->leftJoin('school', 'school.id', '=', 'student.school_id')
+                ->whereIn('student.id', $studentIds)
+                ->orderBy('student.id', 'desc');
+            if (is_effective($params, 'search')) {
+                $query->where('student.name', 'like', "%{$params["search"]}%");
+            }
+            $result = $query->paginate($params["limit"]);
+            return $this->resJson(ErrorCode::SUCCESS, $result);
+        } catch (\Throwable $e) {
+            return $this->resJson(ErrorCode::ERROR, $e->getMessage());
+        }
+    }
+
+    /**
+     * @OA\get(
+     *     tags={"教师"},
+     *     path="/api/teacher/chat-messages",
+     *     summary="聊天记录",
+     *     @OA\Parameter(name="receiver_id", in="query", description="接收人id"),
+     *     @OA\Parameter(name="search", in="query", description="搜索"),
+     *     @OA\Parameter(name="last_id", in="query", description="最早id"),
+     *     @OA\Parameter(name="limit", in="query", description="每页数量"),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="错误信息"),
+     *         @OA\Property(property="data", type="array", description="数据列表", @OA\Items(type="object",
+     *            @OA\Property(property="id", type="integer", description="唯一标识"),
+     *            @OA\Property(property="teacher_id", type="integer", description="教师id"),
+     *            @OA\Property(property="student_id", type="integer", description="学生id"),
+     *            @OA\Property(property="direction", type="integer", description="交流方向[1:教师to学生,2:学生to教师]"),
+     *            @OA\Property(property="content", type="string", description="内容"),
+     *            @OA\Property(property="status", type="integer", description="接收状态[1:已接收,2:未接收]"),
+     *            @OA\Property(property="created_at", type="string", description="创建时间")
+     *         )),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳"),
+     *         required={"code", "message", "data", "timestamp"}
+     *     ))
+     * )
+     *
+     * @RequestParam(fields={"last_id": 0, "limit": 30 })
+     */
+    public function getMessageList(Request $request)
+    {
+        $params = $request->only("receiver_id", "search", "last_id", "limit");
+        $user = $request->user();
+        $params['teacher_id'] = $user->id;
+        $params['student_id'] = $request['receiver_id'];
+        $result = StudentTeacherMessage::getMessage($params);
+        return $this->resJson(ErrorCode::SUCCESS, $result);
     }
 }

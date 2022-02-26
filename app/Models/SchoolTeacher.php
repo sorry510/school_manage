@@ -26,7 +26,7 @@ class SchoolTeacher extends Base
     {
         return self::where('school_id', $school_id)
             ->leftJoin('teacher', 'teacher.id', '=', 'school_teacher.teacher_id')
-            ->select('teacher.name', 'teacher.email', 'school_teacher.teacher_type')
+            ->select('teacher.id', 'teacher.name', 'teacher.email', 'school_teacher.teacher_type')
             ->orderBy('school_teacher.teacher_type', 'asc')
             ->orderBy('school_teacher.id', 'asc')
             ->get();

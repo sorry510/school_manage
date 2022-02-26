@@ -8,7 +8,6 @@ use App\Http\Validates\LoginValidate;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Sorry510\Annotations\Validator;
 
@@ -25,7 +24,7 @@ class LoginController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="username", type="string", description="用户名"),
      *                 @OA\Property(property="password", type="string", description="密码"),
-     *                 @OA\Property(property="type", type="string", description="类型[1:教师,2:学生]"),
+     *                 @OA\Property(property="type", type="string", description="类型[teacher:教师,student:学生]"),
      *                 required={"username", "password", "type"}
      *             )
      *         )
@@ -35,6 +34,7 @@ class LoginController extends Controller
      *         @OA\Property(property="message", type="string", description="错误信息"),
      *         @OA\Property(property="data", type="object", description="返回数据",
      *             @OA\Property(property="token", type="string", description="用户token"),
+     *             @OA\Property(property="type", type="string", description="类型")
      *         ),
      *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳")
      *     ))
@@ -69,6 +69,8 @@ class LoginController extends Controller
         if (!$user) {
             return [ErrorCode::LOGIN_ERROR, ""];
         }
+        $password = $user->password;
+        unset($user->password);
         // 验证用户是否被启用
         if ($user->status != "1") {
             return [ErrorCode::USER_FREEZE, ""];
@@ -78,7 +80,7 @@ class LoginController extends Controller
         $user->last_login_ip = request()->ip();
 
         // 验证密码
-        if (!Hash::check($data['password'], $user->password)) {
+        if (!Hash::check($data['password'], $password)) {
             // 失败次数加一
             $user->login_failure += 1;
             $user->save();
@@ -99,13 +101,15 @@ class LoginController extends Controller
         if (!$user) {
             return [ErrorCode::LOGIN_ERROR, ""];
         }
+        $password = $user->password;
+        unset($user->password);
 
         // 记录登录信息
         $user->last_login_time = date("Y-m-d H:i:s");
         $user->last_login_ip = request()->ip();
 
         // 验证密码
-        if (!Hash::check($data['password'], $user->password)) {
+        if (!Hash::check($data['password'], $password)) {
             // 失败次数加一
             $user->login_failure += 1;
             $user->save();
@@ -123,7 +127,7 @@ class LoginController extends Controller
     /**
      * @OA\delete(
      *     tags={"用户认证"},
-     *     path="/api/login-out",
+     *     path="/api/{type}/login-out",
      *     summary="退出登录",
      *     @OA\Response(response=200, description="Success", @OA\JsonContent(
      *         @OA\Property(property="code", type="integer", description="返回码"),
@@ -135,7 +139,6 @@ class LoginController extends Controller
      */
     public function loginOut(Request $request)
     {
-        Auth::logout();
         return $this->resJson(ErrorCode::SUCCESS);
     }
 
@@ -148,9 +151,10 @@ class LoginController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(property="username", type="string", description="用户名"),
+     *                 @OA\Property(property="name", type="string", description="用户名"),
+     *                 @OA\Property(property="email", type="string", description="邮箱"),
      *                 @OA\Property(property="password", type="string", description="密码"),
-     *                 required={"username", "password"}
+     *                 required={"name", "email", "password"}
      *             )
      *         )
      *     ),
@@ -176,7 +180,8 @@ class LoginController extends Controller
             $data = [
                 "name" => $params['name'],
                 "email" => $params['email'],
-                "password" => Hash::make($params['password']),
+                // "password" => Hash::make($params['password']), // 改为观察者实现
+                "password" => $params['password'],
                 "status" => 1, // 直接激活
             ];
             $user = Teacher::create($data);

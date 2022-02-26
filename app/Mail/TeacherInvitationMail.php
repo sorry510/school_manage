@@ -28,7 +28,7 @@ class TeacherInvitationMail extends Mailable
     public function build()
     {
         return $this->subject('邀请加入')->view('emails.invitation', [
-            'url' => config('app.url') . "/api/invitation?teacher_id={$this->data['teacher_id']}&school_id={$this->data['school_id']}&secret={$this->data['secret']}",
+            'url' => config('app.url') . "/api/teacher/accept?teacher_id={$this->data['teacher_id']}&school_id={$this->data['school_id']}&secret={$this->data['secret']}",
             'school' => $this->data['school'],
         ]);
     }

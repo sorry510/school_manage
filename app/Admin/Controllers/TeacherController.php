@@ -96,9 +96,9 @@ class TeacherController extends AdminController
     public function update($id)
     {
         $data = request()->all();
-        if (empty($data['password'])) {
-            unset($data['password']);
-        }
+        // if (empty($data['password'])) {
+        //     unset($data['password']);
+        // }
         return $this->form()->update($id, $data);
     }
 }

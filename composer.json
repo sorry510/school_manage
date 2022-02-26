@@ -9,12 +9,14 @@
         "doctrine/dbal": "2.*",
         "encore/laravel-admin": "1.*",
         "fideloper/proxy": "~3.3",
+        "fruitcake/laravel-cors": "v1.*",
         "laravel/framework": "5.5.*",
         "laravel/passport": "v4.0.3",
         "laravel/tinker": "~1.0",
         "lcobucci/jwt": "3.3.3",
         "sorry510/annotation": "^0.0.1",
-        "sorry510/constant": "^0.0.1"
+        "sorry510/constant": "^0.0.1",
+        "workerman/phpsocket.io": "^1.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "v2.4.2",

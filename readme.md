@@ -1,6 +1,20 @@
 ## Laravel 5.5.* 教务系统
 ===============
 
+### 安装
+
+```
+composer install
+cp .env.example .env
+```
+
+### socket-io
+
+```
+php artisan socketio start
+php artisan socketio start -d # linux 下守护
+```
+
 ### 开发扩展
 #### 安装ide-help
 
