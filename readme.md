@@ -8,6 +8,12 @@ composer install
 cp .env.example .env
 ```
 
+### 安装 admin 数据表
+
+```
+php artisan admin:install
+```
+
 ### socket-io
 
 ```

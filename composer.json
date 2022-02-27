@@ -6,6 +6,9 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "ext-bcmath": "*",
+        "ext-pcntl": "*",
+        "ext-mbstring": "*",
         "doctrine/dbal": "2.*",
         "encore/laravel-admin": "1.*",
         "fideloper/proxy": "~3.3",
@@ -67,6 +70,10 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true,
+            "symfony/thanks": true
+        }
     }
 }
