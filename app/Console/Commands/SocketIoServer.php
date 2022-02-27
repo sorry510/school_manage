@@ -84,7 +84,7 @@ class SocketIoServer extends Command
 
     private function setConfig()
     {
-        $this->ioPort = getenv("PORT");
+        $this->ioPort = getenv("PORT"); // heroku 部署时用到动态端口
         if (!$this->ioPort) {
             $this->ioPort = config('socket-io.io_port', 12306);
         }
@@ -246,7 +246,7 @@ class SocketIoServer extends Command
     public function workerStart($worker)
     {
         $this->onlineUsers();
-        // $this->createInnerHttp();
+        $this->createInnerHttp();
     }
 
     public function onlineUsers()
@@ -272,6 +272,7 @@ class SocketIoServer extends Command
                 if (empty($data)) {
                     $data = $request->get();
                 }
+                dump($data);
                 try {
                     $to = $data['to'] ?? 0;
                     $content = $data['content'];
