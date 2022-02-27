@@ -12,8 +12,11 @@
  */
 
 Route::get('/', function () {
-    return view('welcome');
+    return 'hello';
+    // return view('welcome');
 });
+
+Route::get('/swagger', '\L5Swagger\Http\Controllers\SwaggerController@api');
 
 // Route::get('/login', function () {
 //     return view('welcome');
