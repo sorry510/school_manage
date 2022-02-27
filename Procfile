@@ -1,1 +1,1 @@
-web: php artisan socketio start
+web: vendor/bin/heroku-php-apache2 public/
