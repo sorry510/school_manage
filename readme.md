@@ -8,6 +8,19 @@ composer install
 cp .env.example .env
 ```
 
+### 部署配置
+
+#### 主项目 Procfile
+```
+web: vendor/bin/heroku-php-apache2 public/
+```
+
+#### SocketIO Procfile
+
+```
+web: php artisan socketio start
+```
+
 ### 安装 admin 数据表
 
 ```

@@ -84,7 +84,7 @@ class SocketIoServer extends Command
 
     private function setConfig()
     {
-        $this->ioPort = getenv("PORT");
+        $this->ioPort = getenv("PORT"); // heroku 部署时用到动态端口
         if (!$this->ioPort) {
             $this->ioPort = config('socket-io.io_port', 12306);
         }
