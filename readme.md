@@ -14,6 +14,13 @@ cp .env.example .env
 php artisan admin:install
 ```
 
+### laravel-Passport
+
+```
+php artisan passport:install
+php artisan passport:keys
+```
+
 ### socket-io
 
 ```

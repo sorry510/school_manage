@@ -28,6 +28,8 @@ class AuthServiceProvider extends ServiceProvider
         // API 认证路由注册
         Passport::routes();
 
+        Passport::loadKeysFrom(storage_path());
+
         // 选择一个私人访问的客户端
         Passport::personalAccessClient(1);
     }
