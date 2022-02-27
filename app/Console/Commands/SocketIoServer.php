@@ -18,7 +18,7 @@ class SocketIoServer extends Command
      * @var string
      */
     protected $signature = 'socketio {action : start|stop|restart}
-                            {--d|d=0: 守护进程}';
+                            {--d}';
 
     /**
      * The console command description.
@@ -69,7 +69,7 @@ class SocketIoServer extends Command
          * argv[0] 默认当前文件
          */
         $argv[1] = $action;
-        $argv[2] = !empty($this->option('d')) ? '-d' : '';
+        $argv[2] = $this->option('d') ? '-d' : '';
 
         $this->setConfig();
         $this->start();
@@ -84,7 +84,10 @@ class SocketIoServer extends Command
 
     private function setConfig()
     {
-        $this->ioPort = config('socket-io.io_port', 12306);
+        $this->ioPort = getenv("PORT");
+        if (!$this->ioPort) {
+            $this->ioPort = config('socket-io.io_port', 12306);
+        }
         $this->innerHttpHost = config('socket-io.io_inner_http', 'http://0.0.0.0:12307');
     }
 

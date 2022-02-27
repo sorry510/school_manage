@@ -1,1 +1,1 @@
-web: php artisan socketio start -d=0
+web: php artisan socketio start

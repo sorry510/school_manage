@@ -25,7 +25,7 @@ php artisan passport:keys
 
 ```
 php artisan socketio start
-php artisan socketio start -d # linux 下守护
+php artisan socketio start --d # linux 下守护
 ```
 
 ### 开发扩展
