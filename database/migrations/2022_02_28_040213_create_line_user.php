@@ -41,6 +41,7 @@ class CreateLineUser extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('line_user');
+        Schema::dropIfExists('line_user_relation');
     }
 }

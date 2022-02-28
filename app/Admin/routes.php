@@ -18,4 +18,5 @@ Route::group([
     $router->resource('school-applies', SchoolApplyController::class);
     $router->resource('teachers', TeacherController::class);
     $router->resource('students', StudentController::class);
+    $router->resource('admin-messages', AdminMessageController::class);
 });
