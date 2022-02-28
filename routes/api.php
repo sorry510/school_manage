@@ -17,7 +17,7 @@ Route::get('/teacher/accept', 'Teacher\\TeacherController@acceptInvitation'); //
 /**
  * 教师接口
  */
-Route::middleware(['auth:teachers'])->prefix('teacher')->group(function () {
+Route::middleware(['auth:teachers', 'scope:teacher'])->prefix('teacher')->group(function () {
     Route::post('login-out', 'Login\\LoginController@loginOut'); // 登出
     Route::get('info', 'Teacher\\IndexController@index'); // 个人信息
 
@@ -40,7 +40,7 @@ Route::middleware(['auth:teachers'])->prefix('teacher')->group(function () {
 /**
  * 学生接口
  */
-Route::middleware(['auth:students'])->prefix('student')->group(function () {
+Route::middleware(['auth:students', 'scope:student'])->prefix('student')->group(function () {
     Route::post('login-out', 'Login\\LoginController@loginOut'); // 登出
     Route::get('info', 'Student\\IndexController@index'); // 个人信息
 

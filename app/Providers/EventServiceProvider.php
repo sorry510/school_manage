@@ -13,8 +13,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\SchoolApplyEvent' => [
-            'App\Events\SchoolApplyListener',
+        \App\Events\SchoolApplyEvent::class => [
+            \App\Events\SchoolApplyListener::class,
+        ],
+        \SocialiteProviders\Manager\SocialiteWasCalled::class => [
+            \SocialiteProviders\Line\LineExtendSocialite::class . '@handle',
         ],
     ];
 

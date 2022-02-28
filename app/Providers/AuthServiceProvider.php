@@ -30,6 +30,11 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::loadKeysFrom(storage_path());
 
+        Passport::tokensCan([
+            'student' => 'student auth',
+            'teacher' => 'teacher auth',
+        ]);
+
         // 选择一个私人访问的客户端
         Passport::personalAccessClient(1);
     }

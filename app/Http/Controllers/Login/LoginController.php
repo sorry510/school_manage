@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 use Sorry510\Annotations\Validator;
 
 class LoginController extends Controller
@@ -90,7 +91,7 @@ class LoginController extends Controller
         $user->login_failure = 0;
         $user->online = 1;
         $user->save();
-        $token = $user->createToken($data["type"]);
+        $token = $user->createToken($data["type"], ['teacher']);
         return [ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => 'teacher']];
     }
 
@@ -120,7 +121,7 @@ class LoginController extends Controller
         $user->login_failure = 0;
         $user->online = 1;
         $user->save();
-        $token = $user->createToken($data["type"]);
+        $token = $user->createToken($data["type"], ['student']);
         return [ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => 'student']];
     }
 
@@ -199,5 +200,39 @@ class LoginController extends Controller
             return ErrorCode::EMAIL_EXIST;
         }
         return ErrorCode::SUCCESS;
+    }
+
+    public function lineLogin()
+    {
+        return Socialite::driver('line')->redirect();
+    }
+
+    /**
+     *
+     * @Author sorry510 491559675@qq.com
+     * @DateTime 2022-02-27
+     *
+     * @return void
+     */
+    public function lineCallback()
+    {
+        $user = Socialite::driver('line')->user();
+        // id
+        // name
+        // avatar
+        // email
+        // return $user;
+        return view('line.login', [
+            'result' => json_encode([
+                'code' => 1,
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'avatar' => $user->avatar,
+                    'email' => $user->email,
+                ],
+            ]),
+            'domain' => config('app.url'),
+        ]);
     }
 }

@@ -16,8 +16,10 @@
         "fruitcake/laravel-cors": "v1.*",
         "laravel/framework": "5.5.*",
         "laravel/passport": "v4.0.3",
+        "laravel/socialite": "v3.*",
         "laravel/tinker": "~1.0",
         "lcobucci/jwt": "3.3.3",
+        "socialiteproviders/line": "v2.*",
         "sorry510/annotation": "^0.0.1",
         "sorry510/constant": "^0.0.1",
         "workerman/phpsocket.io": "^1.1"

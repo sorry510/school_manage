@@ -16,6 +16,9 @@ Route::get('/', function () {
     // return view('welcome');
 });
 
+Route::get('/login/line', 'Login\LoginController@lineLogin');
+Route::get('/login/line/callback', 'Login\LoginController@lineCallback');
+
 Route::get('/swagger', '\L5Swagger\Http\Controllers\SwaggerController@api');
 
 // Route::get('/login', function () {
