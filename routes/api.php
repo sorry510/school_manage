@@ -17,7 +17,7 @@ Route::get('/teacher/accept', 'Teacher\\TeacherController@acceptInvitation'); //
 /**
  * 教师接口
  */
-Route::middleware(['auth:teachers'])->prefix('teacher')->group(function () {
+Route::middleware(['auth:teachers', 'scope:teacher'])->prefix('teacher')->group(function () {
     Route::post('login-out', 'Login\\LoginController@loginOut'); // 登出
     Route::get('info', 'Teacher\\IndexController@index'); // 个人信息
 
@@ -35,12 +35,14 @@ Route::middleware(['auth:teachers'])->prefix('teacher')->group(function () {
     Route::get('students-follow', 'Teacher\\TeacherController@getFollowStudentList'); // 被关注的学生列表
 
     Route::get('chat-messages', 'Teacher\\TeacherController@getMessageList'); // 聊天记录
+
+    Route::get('admin-messages', 'Teacher\\TeacherController@getAdminMessageList'); // 管理员推送消息
 });
 
 /**
  * 学生接口
  */
-Route::middleware(['auth:students'])->prefix('student')->group(function () {
+Route::middleware(['auth:students', 'scope:student'])->prefix('student')->group(function () {
     Route::post('login-out', 'Login\\LoginController@loginOut'); // 登出
     Route::get('info', 'Student\\IndexController@index'); // 个人信息
 
@@ -50,4 +52,6 @@ Route::middleware(['auth:students'])->prefix('student')->group(function () {
     Route::post('unlike', 'Student\\StudentController@unlike'); // 取消关注教师
 
     Route::get('chat-messages', 'Student\\StudentController@getMessageList'); // 聊天记录
+
+    Route::get('admin-messages', 'Student\\StudentController@getAdminMessageList'); // 管理员推送消息
 });

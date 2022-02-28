@@ -180,7 +180,7 @@ return [
         /**
          * 自定义服务
          */
-
+        \SocialiteProviders\Manager\ServiceProvider::class,
     ],
 
     /*

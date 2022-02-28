@@ -101,10 +101,10 @@ class CreateSchoolTables extends Migration
 
         Schema::create('admin_message', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('admin_id')->comment('admin_id');
-            $table->integer('type')->default(1)->comment('推送类型[1:广播,2:定向]');
-            $table->string('teacher_ids')->default('')->comment('教师ids');
-            $table->string('student_ids')->default('')->comment('学生ids');
+            $table->integer('type')->default(1)->comment('推送类型[1:全体,2:教师,3:学生,4:line]');
+            $table->integer('teacher_id')->default(0)->comment('教师id');
+            $table->integer('student_id')->default(0)->comment('学生id');
+            $table->string('line_id')->default('')->comment('line_id');
             $table->longText('content')->comment('内容');
             $table->integer('status')->default(2)->comment('接收状态[1:已接收,2:未接收]');
             $table->dateTime('created_at')->nullable()->comment('创建时间');

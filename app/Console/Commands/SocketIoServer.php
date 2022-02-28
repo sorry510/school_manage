@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AdminMessage;
 use App\Models\Student;
 use App\Models\StudentTeacherMessage;
 use App\Models\Teacher;
@@ -27,10 +28,13 @@ class SocketIoServer extends Command
      */
     protected $description = 'socket-io server';
 
+    /**
+     * @var SocketIO
+     */
     protected $io;
     protected $inner_http_worker;
 
-    protected $onlineUsers = []; // 保存在线 users
+    protected $onlineUsers = []; // 保存在线 users key: teacher|student+id
 
     protected $studentsCache = []; // 学生缓存
     protected $teachersCache = []; // 教师缓存
@@ -45,6 +49,8 @@ class SocketIoServer extends Command
     const TYPE_LOGIN = 'login'; // 登录
     const TYPE_CHAT = 'chat'; // 交流
     const TYPE_ONLINE = 'online'; // 在线情况
+
+    const ADMIN_MESSAGE = 'message'; // 后台推送消息
 
     /**
      * Create a new command instance.
@@ -245,13 +251,17 @@ class SocketIoServer extends Command
      */
     public function workerStart($worker)
     {
-        $this->onlineUsers();
-        $this->createInnerHttp();
+        if ($worker->id === 0) {
+            // 只在第一个 worker 进程中执行，避免并发问题
+            $this->onlineUsers();
+            $this->pushAdminMessage();
+            // $this->createInnerHttp(); // TODO 不知道如何在heroku中开启2个端口，暂停用
+        }
     }
 
     public function onlineUsers()
     {
-        // 3秒 推送一次,当前在线人数情况
+        // 3秒 推送一次,当前在线人数情况, 单位秒，支持小数，可以精确到0.001
         $timeInterval = 3;
         Timer::add($timeInterval, function () {
             $this->io->emit(self::TYPE_ONLINE, array_values($this->onlineUsers));
@@ -291,6 +301,58 @@ class SocketIoServer extends Command
             };
             $inner_http_worker->listen();
         }
+    }
+
+    /**
+     * 推送管理员发送的信息
+     * @Author sorry510 491559675@qq.com
+     * @DateTime 2022-02-28
+     *
+     * @return void
+     */
+    public function pushAdminMessage()
+    {
+        $timeInterval = 3;
+        Timer::add($timeInterval, function () {
+            $messages = AdminMessage::where('status', AdminMessage::STATUS_OFF)->get();
+            foreach ($messages as $message) {
+                if ($message->type === AdminMessage::TYPE_ALL) {
+                    // 广播
+                    $this->io->emit(self::ADMIN_MESSAGE, [
+                        'id' => $message->id,
+                        'content' => $message->content,
+                    ]);
+                    $message->status = AdminMessage::STATUS_ALL;
+                    $message->save();
+                } else if ($message->type === AdminMessage::TYPE_TEACHER) {
+                    // 教师推送,定向推送给接收人
+                    $key = 'teacher' . $message->teacher_id;
+                    if (isset($this->onlineUsers[$key])) {
+                        // 在线时，再推送，同时更改状态
+                        $this->io->to($key)->emit(self::ADMIN_MESSAGE, [
+                            'id' => $message->id,
+                            'content' => $message->content,
+                        ]);
+                        $message->status = AdminMessage::STATUS_ON;
+                        $message->save();
+                    }
+                } else if ($message->type === AdminMessage::TYPE_STUDENT) {
+                    // 学生推送,定向推送给接收人
+                    $key = 'student' . $message->student_id;
+                    if (isset($this->onlineUsers[$key])) {
+                        // 在线时，再推送，同时更改状态
+                        $this->io->to($key)->emit(self::ADMIN_MESSAGE, [
+                            'id' => $message->id,
+                            'content' => $message->content,
+                        ]);
+                        $message->status = AdminMessage::STATUS_ON;
+                        $message->save();
+                    }
+                } else if ($message->type === AdminMessage::TYPE_LINE) {
+                    // TODO 推送 line 用户
+                }
+            }
+        });
     }
 
     protected function log($data = '')
