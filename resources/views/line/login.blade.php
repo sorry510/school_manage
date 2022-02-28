@@ -11,7 +11,7 @@
 登陆中...
 <script>
     window.onload = function () {
-        window.opener.postMessage("{{ $result }}", "{{ $domain }}");
+        window.opener.postMessage("{{!! $result !!}}", "{{ $domain }}");
         window.close();
     }
 </script>

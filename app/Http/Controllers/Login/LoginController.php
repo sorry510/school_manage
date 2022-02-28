@@ -231,7 +231,7 @@ class LoginController extends Controller
                     'avatar' => $user->avatar,
                     'email' => $user->email,
                 ],
-            ]),
+            ], JSON_UNESCAPED_UNICODE),
             'domain' => config('app.url'),
         ]);
     }
