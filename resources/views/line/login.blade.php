@@ -13,7 +13,7 @@
     window.onload = function () {
         var data = @json($result);
         if (window.opener) {
-            window.opener.postMessage(JSON.stringify($data), "{{ $domain }}");
+            window.opener.postMessage(JSON.stringify(data), "{{ $domain }}");
         }
         window.close();
     }
