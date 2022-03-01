@@ -36,3 +36,11 @@ Artisan::command('pwd {password}', function ($password) {
     $result = Hash::check($password, $hash);
     dd($result);
 })->describe('password');
+
+// Artisan::command('chat', function () {
+//     $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(config('line-bot.channel_access_token'));
+//     $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => config('line-bot.channel_secret')]);
+//     $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('hello');
+//     $response = $bot->pushMessage('<to>', $textMessageBuilder);
+//     echo $response->getHTTPStatus() . ' ' . $response->getRawBody();
+// })->describe('chat');

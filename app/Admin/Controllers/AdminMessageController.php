@@ -45,6 +45,7 @@ class AdminMessageController extends AdminController
         $grid->column('content', '内容');
         $grid->column('status', __('common.status'))->using(AdminMessage::STATUS_TEXTS);
         $grid->column('created_at', __('common.created_at'));
+        $grid->model()->orderBy('id', 'desc');
         $grid->disableActions(); // 禁用行操作列
 
         return $grid;
