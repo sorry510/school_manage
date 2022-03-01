@@ -24,10 +24,10 @@ class CreateLineUser extends Migration
         DB::statement("comment on table line_user is 'line用户表'");
 
         Schema::create('line_user_relation', function (Blueprint $table) {
-            $table->string('id')->comment('id');
+            $table->increments('id')->comment('id');
             $table->string('line_user_id')->comment('line_user_id');
             $table->integer('relation_id')->comment('relation_id');
-            $table->integer('type')->default(1)->comment('推送类型[1:教师,2:学生]');
+            $table->integer('type')->default(1)->comment('关联类型[1:教师,2:学生]');
             $table->dateTime('created_at')->nullable()->comment('创建时间');
             $table->dateTime('updated_at')->nullable()->comment('更新时间');
         });

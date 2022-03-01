@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Login;
 use App\Constants\ErrorCode;
 use App\Http\Controllers\Controller;
 use App\Http\Validates\LoginValidate;
+use App\Models\LineUser;
+use App\Models\LineUserRelation;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -202,37 +204,126 @@ class LoginController extends Controller
         return ErrorCode::SUCCESS;
     }
 
+    /**
+     * line Socialite login
+     */
     public function lineLogin()
     {
         return Socialite::driver('line')->redirect();
     }
 
     /**
-     *
-     * @Author sorry510 491559675@qq.com
-     * @DateTime 2022-02-27
-     *
-     * @return void
+     * line Socialite login callback
      */
     public function lineCallback()
     {
-        $user = Socialite::driver('line')->user();
-        // id
-        // name
-        // avatar
-        // email
-        // return $user;
-        return view('line.login', [
-            'result' => json_encode([
-                'code' => 1,
-                'data' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'avatar' => $user->avatar,
-                    'email' => $user->email,
-                ],
-            ], JSON_UNESCAPED_UNICODE),
-            'domain' => config('app.url'),
-        ]);
+        try {
+            $user = Socialite::driver('line')->user();
+            $lineUser = LineUser::where('id', $user->id)->first();
+            if (!$lineUser) {
+                $lineUser = new LineUser();
+                $lineUser->id = $user->id;
+            }
+            $lineUser->name = $user->name;
+            $lineUser->avatar = $user->avatar;
+            $lineUser->email = $user->email;
+            $lineUser->save();
+
+            $teachers = []; // 已绑定的教师
+            $students = []; // 已绑定的学生
+            $relations = LineUserRelation::select('line_user_id', 'relation_id', 'type')->where('line_user_id', $user->id)->get();
+            foreach ($relations as $relation) {
+                if ($relation->type === LineUserRelation::TYPE_TEACHER) {
+                    $teacher = Teacher::where('id', $relation->relation_id)->first();
+                    $teachers[] = [
+                        'line_user_id' => $relation->line_user_id,
+                        'relation_id' => $relation->relation_id,
+                        'type' => $relation->type,
+                        'name' => $teacher->name,
+                    ];
+                } else if ($relation->type === LineUserRelation::TYPE_STUDENT) {
+                    $student = Student::where('id', $relation->relation_id)->first();
+                    $students[] = [
+                        'line_user_id' => $relation->line_user_id,
+                        'relation_id' => $relation->relation_id,
+                        'type' => $relation->type,
+                        'name' => $student->name,
+                    ];
+                }
+            }
+
+            return view('line.login', [
+                'result' => json_encode([
+                    'line' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'avatar' => $user->avatar,
+                        'email' => $user->email,
+                    ],
+                    'relations' => [
+                        'teachers' => $teachers,
+                        'students' => $students,
+                    ],
+                ], JSON_UNESCAPED_UNICODE),
+                'domain' => config('app.url'),
+            ]);
+        } catch (\Throwable $e) {
+            return view('line.loginfailed');
+        }
+    }
+
+    /**
+     * @OA\post(
+     *     tags={"用户认证"},
+     *     path="/api/line/login-in",
+     *     summary="LINE用户登录",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="line_id", type="string", description="line_id"),
+     *                 @OA\Property(property="relation_id", type="string", description="relation_id"),
+     *                 @OA\Property(property="type", type="string", description="类型"),
+     *                 required={"line_id", "relation_id", "type"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="错误信息"),
+     *         @OA\Property(property="data", type="object", description="返回数据",
+     *             @OA\Property(property="token", type="string", description="用户token"),
+     *             @OA\Property(property="type", type="string", description="类型")
+     *         ),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳")
+     *     ))
+     * )
+     */
+    public function handleLineLogin(Request $request)
+    {
+        $params = $request->only("line_id", "relation_id", "type");
+        try {
+            $find = LineUserRelation::where([
+                'line_user_id' => $params['line_id'],
+                'relation_id' => $params['relation_id'],
+                'type' => $params['type'],
+            ])->first();
+            if ($find) {
+                if ($params['type'] == LineUserRelation::TYPE_TEACHER) {
+                    $teacher = Teacher::where('id', $params['relation_id'])->first();
+                    $type = 'teacher';
+                    $token = $teacher->createToken($type, [$type]);
+                    return $this->resJson(ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => $type]);
+                } else if ($params['type'] == LineUserRelation::TYPE_STUDENT) {
+                    $student = Student::where('id', $params['relation_id'])->first();
+                    $type = 'student';
+                    $token = $student->createToken($type, [$type]);
+                    return $this->resJson(ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => $type]);
+                }
+            }
+            return $this->resJson(ErrorCode::DATA_NO_EXIST);
+        } catch (\Throwable $e) {
+            return $this->resJson(ErrorCode::ERROR, $e->getMessage());
+        }
     }
 }

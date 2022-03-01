@@ -11,6 +11,7 @@
 |
  */
 Route::post('/login-in', 'Login\\LoginController@loginIn'); // 登录
+Route::post('/line/login-in', 'Login\\LoginController@handleLineLogin'); // LINE登录
 Route::post('/register', 'Login\\LoginController@registerTeacher'); // 教师注册
 Route::get('/teacher/accept', 'Teacher\\TeacherController@acceptInvitation'); // 老师接受邀请
 
@@ -20,6 +21,7 @@ Route::get('/teacher/accept', 'Teacher\\TeacherController@acceptInvitation'); //
 Route::middleware(['auth:teachers', 'scope:teacher'])->prefix('teacher')->group(function () {
     Route::post('login-out', 'Login\\LoginController@loginOut'); // 登出
     Route::get('info', 'Teacher\\IndexController@index'); // 个人信息
+    Route::post('bind-line', 'Teacher\\IndexController@bindTeacher'); // line绑定教师
 
     Route::post('schools', 'Teacher\\TeacherController@applySchool'); // 申请学校
     Route::delete('schools/{id}', 'Teacher\\TeacherController@cancelApplySchool'); // 取消申请学校
@@ -45,6 +47,7 @@ Route::middleware(['auth:teachers', 'scope:teacher'])->prefix('teacher')->group(
 Route::middleware(['auth:students', 'scope:student'])->prefix('student')->group(function () {
     Route::post('login-out', 'Login\\LoginController@loginOut'); // 登出
     Route::get('info', 'Student\\IndexController@index'); // 个人信息
+    Route::post('bind-line', 'Student\\IndexController@bindStudent'); // line绑定学生
 
     Route::get('student-info', 'Student\\StudentController@getStudentInfo'); // 学生信息
     Route::get('teachers', 'Student\\StudentController@getTeacherList'); // 教师列表

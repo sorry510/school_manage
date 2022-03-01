@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Constants\ErrorCode;
 use App\Http\Controllers\Controller;
 use App\Models\AdminMessage;
+use App\Models\LineUserRelation;
 use App\Models\School;
 use App\Models\SchoolTeacher;
 use App\Models\StudentTeacherLike;
@@ -109,6 +110,7 @@ class StudentController extends Controller
      *             @OA\Property(property="name", type="string", description="姓名"),
      *             @OA\Property(property="school", type="string", description="学校"),
      *             @OA\Property(property="school_remark", type="string", description="学校备注"),
+     *             @OA\Property(property="hasBindLine", type="bool", description="是否已绑定line"),
      *             @OA\Property(property="created_at", type="string", description="创建时间"),
      *         ),
      *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳"),
@@ -122,6 +124,9 @@ class StudentController extends Controller
         $school = School::select('id', 'name', 'remark')->where('id', $user->school_id)->first();
         $user->school = $school->name;
         $user->school_remark = $school->remark;
+        $user->hasBindLine = !!LineUserRelation::where('relation_id', $user->id)
+            ->where('type', LineUserRelation::TYPE_STUDENT)
+            ->first();
         return $this->resJson(ErrorCode::SUCCESS, $user);
     }
 
