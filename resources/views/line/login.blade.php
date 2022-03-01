@@ -15,7 +15,7 @@
         if (window.opener) {
             window.opener.postMessage(JSON.stringify(data), "{{ $domain }}");
         }
-        // window.close();
+        window.close();
     }
 </script>
 </body>
