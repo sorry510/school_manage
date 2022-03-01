@@ -218,12 +218,14 @@ class LoginController extends Controller
     public function lineCallback()
     {
         try {
-            // $user = Socialite::driver('line')->user();
-            $user = new \StdClass;
-            $user->id = 'U34a89770e846f5205ce6e786b6bf3895';
-            $user->name = 'sorry510';
-            $user->avatar = 'https://profile.line-scdn.net/0hxlRcz8k_J0NvGjM8M-JYFFNfKS4YNCELF3lgLUtKcSMWejQcAXo_cEMbeSFCeWdCAX84dRgdLXQV';
-            $user->email = null;
+            $user = Socialite::driver('line')->user();
+
+            // $user = new \StdClass;
+            // $user->id = 'U34a89770e846f5205ce6e786b6bf3895';
+            // $user->name = 'sorry510';
+            // $user->avatar = 'https://profile.line-scdn.net/0hxlRcz8k_J0NvGjM8M-JYFFNfKS4YNCELF3lgLUtKcSMWejQcAXo_cEMbeSFCeWdCAX84dRgdLXQV';
+            // $user->email = null;
+
             $lineUser = LineUser::where('id', $user->id)->first();
             if (!$lineUser) {
                 $lineUser = new LineUser();
@@ -273,7 +275,6 @@ class LoginController extends Controller
                 'domain' => config('app.url'),
             ]);
         } catch (\Throwable $e) {
-            dd($e->getMessage());
             return view('line.loginfailed');
         }
     }
