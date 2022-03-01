@@ -18,6 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (!defined('APP_URL')) {
+            define('APP_URL', config('app.url'));
+        }
         Teacher::observe(TeacherObserver::class);
         Student::observe(StudentObserver::class);
     }

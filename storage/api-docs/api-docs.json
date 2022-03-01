@@ -5,6 +5,11 @@
         "description": "教务系统接口文档",
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
     "paths": {
         "/api/login-in": {
             "post": {
@@ -206,11 +211,16 @@
                             "schema": {
                                 "required": [
                                     "line_id",
+                                    "relation_id",
                                     "type"
                                 ],
                                 "properties": {
                                     "line_id": {
                                         "description": "line_id",
+                                        "type": "string"
+                                    },
+                                    "relation_id": {
+                                        "description": "relation_id",
                                         "type": "string"
                                     },
                                     "type": {
@@ -2238,6 +2248,17 @@
                         }
                     }
                 }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "Authorization-Bearer": {
+                "type": "http",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "Bearer"
             }
         }
     }

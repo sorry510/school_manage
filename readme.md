@@ -41,6 +41,13 @@ php artisan socketio start
 php artisan socketio start --d # linux 下守护
 ```
 
+### 第三方登录使用了 postMessage 传输信息
+>需要注意 origin 使用的协议(http/https)，访问时必须保持一致
+
+```
+APP_URL=http://localhost:8000
+```
+
 ### 开发扩展
 #### 安装ide-help
 
