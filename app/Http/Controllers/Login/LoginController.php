@@ -218,15 +218,20 @@ class LoginController extends Controller
     public function lineCallback()
     {
         try {
-            $user = Socialite::driver('line')->user();
+            // $user = Socialite::driver('line')->user();
+            $user = new \StdClass;
+            $user->id = 'U34a89770e846f5205ce6e786b6bf3895';
+            $user->name = 'sorry510';
+            $user->avatar = 'https://profile.line-scdn.net/0hxlRcz8k_J0NvGjM8M-JYFFNfKS4YNCELF3lgLUtKcSMWejQcAXo_cEMbeSFCeWdCAX84dRgdLXQV';
+            $user->email = null;
             $lineUser = LineUser::where('id', $user->id)->first();
             if (!$lineUser) {
                 $lineUser = new LineUser();
                 $lineUser->id = $user->id;
             }
-            $lineUser->name = $user->name;
-            $lineUser->avatar = $user->avatar;
-            $lineUser->email = $user->email;
+            $lineUser->name = $user->name ?? '';
+            $lineUser->avatar = $user->avatar ?? '';
+            $lineUser->email = $user->email ?? '';
             $lineUser->save();
 
             $teachers = []; // 已绑定的教师
@@ -253,7 +258,7 @@ class LoginController extends Controller
             }
 
             return view('line.login', [
-                'result' => json_encode([
+                'result' => [
                     'line' => [
                         'id' => $user->id,
                         'name' => $user->name,
@@ -264,10 +269,11 @@ class LoginController extends Controller
                         'teachers' => $teachers,
                         'students' => $students,
                     ],
-                ], JSON_UNESCAPED_UNICODE),
+                ],
                 'domain' => config('app.url'),
             ]);
         } catch (\Throwable $e) {
+            dd($e->getMessage());
             return view('line.loginfailed');
         }
     }
