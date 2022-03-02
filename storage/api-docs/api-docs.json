@@ -1492,7 +1492,7 @@
                     {
                         "name": "teacher_id",
                         "in": "query",
-                        "description": "学校id"
+                        "description": "教师id"
                     },
                     {
                         "name": "school_id",
@@ -1502,37 +1502,33 @@
                     {
                         "name": "secret",
                         "in": "query",
-                        "description": "学校id"
+                        "description": "secret"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "code": {
-                                            "description": "返回码",
-                                            "type": "integer"
-                                        },
-                                        "message": {
-                                            "description": "信息",
-                                            "type": "string"
-                                        },
-                                        "data": {
-                                            "description": "返回数据",
-                                            "type": "object"
-                                        },
-                                        "timestamp": {
-                                            "description": "服务器响应的时间戳",
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/teacher/register-active": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "教师账号激活",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::registerActive",
+                "parameters": [
+                    {
+                        "name": "teacher_id",
+                        "in": "query",
+                        "description": "教师id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
                     }
                 }
             }

@@ -273,15 +273,10 @@ class TeacherController extends Controller
      *     tags={"教师"},
      *     path="/api/teacher/accept",
      *     summary="接受邀请",
-     *     @OA\Parameter(name="teacher_id", in="query", description="学校id"),
+     *     @OA\Parameter(name="teacher_id", in="query", description="教师id"),
      *     @OA\Parameter(name="school_id", in="query", description="学校id"),
-     *     @OA\Parameter(name="secret", in="query", description="学校id"),
-     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
-     *         @OA\Property(property="code", type="integer", description="返回码"),
-     *         @OA\Property(property="message", type="string", description="信息"),
-     *         @OA\Property(property="data", type="object", description="返回数据"),
-     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳")
-     *     ))
+     *     @OA\Parameter(name="secret", in="query", description="secret"),
+     *     @OA\Response(response=200, description="Success")
      * )
      */
     public function acceptInvitation(Request $request)
@@ -305,6 +300,31 @@ class TeacherController extends Controller
                 }
             }
             // 验证是伪造
+            return view('emails.failed');
+        } catch (\Throwable $e) {
+            return view('emails.failed');
+        }
+    }
+
+    /**
+     * @OA\get(
+     *     tags={"教师"},
+     *     path="/api/teacher/register-active",
+     *     summary="教师账号激活",
+     *     @OA\Parameter(name="teacher_id", in="query", description="教师id"),
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
+    public function registerActive(Request $request)
+    {
+        $params = $request->only("teacher_id");
+        try {
+            $find = Teacher::select('id', 'status')->where('id', $params['teacher_id'])->where('status', Teacher::STATUS_NO_ACTIVE)->first();
+            if ($find) {
+                $find->status = Teacher::STATUS_ACTIVE;
+                $find->save();
+                return view('emails.registersuccess');
+            }
             return view('emails.failed');
         } catch (\Throwable $e) {
             return view('emails.failed');

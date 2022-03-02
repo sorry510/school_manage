@@ -13,7 +13,8 @@
 Route::post('/login-in', 'Login\\LoginController@loginIn'); // 登录
 Route::post('/line/login-in', 'Login\\LoginController@handleLineLogin'); // LINE登录
 Route::post('/register', 'Login\\LoginController@registerTeacher'); // 教师注册
-Route::get('/teacher/accept', 'Teacher\\TeacherController@acceptInvitation'); // 老师接受邀请
+Route::get('/teacher/accept', 'Teacher\\TeacherController@acceptInvitation'); // 教师接受邀请
+Route::get('/teacher/register-active', 'Teacher\\TeacherController@registerActive'); // 教师账号激活
 
 /**
  * 教师接口

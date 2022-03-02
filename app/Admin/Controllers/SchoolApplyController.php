@@ -46,7 +46,7 @@ class SchoolApplyController extends AdminController
                 $actions->disableView();
             }
         });
-        // $grid->disableCreateButton();
+        $grid->disableCreateButton();
 
         return $grid;
     }

@@ -30,7 +30,7 @@ class SchoolApplyListener
     {
         $schoolApply = $event->schoolApply;
         if ($schoolApply->status == SchoolApply::STATUS_SUCCESS) {
-            // 创建学校
+            // 创建学校和教师管理员
             DB::transaction(function () use ($schoolApply) {
                 $school = School::create([
                     'name' => $schoolApply->name,

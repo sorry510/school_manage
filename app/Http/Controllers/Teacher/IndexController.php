@@ -70,7 +70,7 @@ class IndexController extends Controller
             $hasOne = LineUserRelation::where('line_user_id', $params['line_id'])
                 ->where('type', LineUserRelation::TYPE_TEACHER)->first(); // 查阅是否已经绑定了其它教师
             if ($hasOne) {
-                return $this->resJson(ErrorCode::ERROR, '已经绑定了其它教师');
+                return $this->resJson(ErrorCode::ERROR, '已经绑定了其他教师');
             }
             LineUserRelation::create([
                 'line_user_id' => $params['line_id'],

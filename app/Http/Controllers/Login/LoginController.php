@@ -185,10 +185,9 @@ class LoginController extends Controller
                 "email" => $params['email'],
                 // "password" => Hash::make($params['password']), // 改为观察者实现
                 "password" => $params['password'],
-                "status" => 1, // 直接激活
+                "status" => config('app.teacher_auto_active') ? Teacher::STATUS_ACTIVE : Teacher::STATUS_NO_ACTIVE, // 是否自动激活
             ];
             $user = Teacher::create($data);
-            // TODO 注册成功，发送邮箱
             return $this->resJson(ErrorCode::SUCCESS, $user);
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
