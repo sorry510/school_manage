@@ -23,7 +23,7 @@ class AdminMessage extends Base
     const STATUS_ALL = 3;
 
     const STATUS_TEXTS = [
-        self::STATUS_ON => '已接受',
+        self::STATUS_ON => '已接收',
         self::STATUS_OFF => '未接收',
         self::STATUS_ALL => '-',
     ];
