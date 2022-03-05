@@ -11,6 +11,30 @@ composer install
 cp .env.example .env
 ```
 
+### 部署配置
+
+#### 缓存
+
+```
+# 配置缓存
+php artisan route:cache
+php artisan config:cache
+php artisan view:cache
+
+# 清除缓存
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+#### .env 文件
+
+- APP_ENV=production
+> 环境设置为 production
+
+
+- APP_DEBUG=false
+> 取消调试模式(接口错误不再显示具体错误信息)
+
 #### heroku 部署测试预览地址
 #### 后台管理地址
 
@@ -120,4 +144,12 @@ php artisan l5-swagger:generate
 
 ```
 {{host}}/api/documentation
+```
+
+#### php-cs 格式化代码
+>根据`.php-cs-fixer.dist.php` 配置进行格式化文件，更多配置参考[PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+
+```
+composer global require friendsofphp/php-cs-fixer
+php-cs-fixer fix .
 ```
