@@ -180,18 +180,20 @@ class TeacherController extends Controller
     {
         $params = $request->only("search", "limit");
         $user = $request->user("teachers");
+        $userId = $user->id;
         try {
             $schoolIds = SchoolTeacher::where('teacher_id', $user->id)->pluck('school_id');
             $query = School::whereIn('id', $schoolIds)->orderBy('id', 'desc');
             if (is_effective($params, 'search')) {
                 $query->where('name', 'like', "%{$params["search"]}%");
             }
-            $result = $query->paginate($params["limit"]);
-            $result->each(function ($item) use ($user) {
-                $teachers = SchoolTeacher::getSchoolTeachers($item->id);
+            $schools = $query->paginate($params["limit"]);
+            $schoolTeacherGroups = SchoolTeacher::getSchoolTeachers($schoolIds)->groupBy('school_id');
+            $schools->each(function ($item) use ($userId, $schoolTeacherGroups) {
                 $isAdmin = 0; // 不是管理员
-                $data = $teachers->map(function ($teacher) use ($user, &$isAdmin) {
-                    if ($teacher->teacher_type === SchoolTeacher::TYPE_ADMIN && $teacher->id === $user->id) {
+                $teachers = $schoolTeacherGroups[$item->id];
+                $data = $teachers->map(function ($teacher) use ($userId, &$isAdmin) {
+                    if ($teacher->teacher_type === SchoolTeacher::TYPE_ADMIN && $teacher->id === $userId) {
                         $isAdmin = 1; // 是管理员
                     }
                     return [
@@ -202,9 +204,9 @@ class TeacherController extends Controller
                     ];
                 })->all();
                 $item->teachers = $data;
-                $item->isAdmin = $isAdmin;
+                $item->isAdmin = $isAdmin; // 判定当前用户是不是管理员
             });
-            return $this->resJson(ErrorCode::SUCCESS, $result);
+            return $this->resJson(ErrorCode::SUCCESS, $schools);
         } catch (\Throwable $e) {
             return $this->resJson(ErrorCode::ERROR, $e->getMessage());
         }
@@ -649,7 +651,7 @@ class TeacherController extends Controller
      *     ))
      * )
      *
-     * @RequestParam(fields={"page": 1, "limit": 30 })
+     * @RequestParam(fields={"page": 1, "limit": 10 })
      */
     public function getAdminMessageList(Request $request)
     {

@@ -22,13 +22,20 @@ class SchoolTeacher extends Base
             ->first();
     }
 
-    public static function getSchoolTeachers($school_id)
+    public static function getSchoolTeachers($school_ids)
     {
-        return self::where('school_id', $school_id)
-            ->leftJoin('teacher', 'teacher.id', '=', 'school_teacher.teacher_id')
-            ->select('teacher.id', 'teacher.name', 'teacher.email', 'school_teacher.teacher_type')
+        $query = self::leftJoin('teacher', 'teacher.id', '=', 'school_teacher.teacher_id')
+            ->select('teacher.id', 'teacher.name', 'teacher.email', 'school_teacher.school_id', 'school_teacher.teacher_type')
             ->orderBy('school_teacher.teacher_type', 'asc')
-            ->orderBy('school_teacher.id', 'asc')
-            ->get();
+            ->orderBy('school_teacher.id', 'asc');
+        if (!empty($school_ids)) {
+            if (is_array($school_ids)) {
+                $query->whereIn('school_id', $school_ids);
+            } elseif (is_numeric($school_ids)) {
+                $query->where('school_id', $school_ids);
+            }
+        }
+        return $query->get();
+
     }
 }

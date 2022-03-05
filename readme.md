@@ -78,8 +78,8 @@ php artisan admin:install
 ### laravel-Passport 设置
 
 ```
-php artisan passport:install
-php artisan passport:keys
+php artisan passport:install # 生成2条数据
+php artisan passport:keys # 生成秘钥
 ```
 
 ### 开启 socket-io 命令
