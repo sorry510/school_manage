@@ -27,6 +27,7 @@ class AdminRoleController extends RoleController
             ->settings([
                 'preserveSelectionOnMove' => 'moved',
                 'moveOnSelect' => false,
+                'helperSelectNamePostfix' => '',
             ]) // https://www.virtuosoft.eu/code/bootstrap-duallistbox/
             ->options($permissionModel::all()->pluck('name', 'id'));
 
