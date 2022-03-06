@@ -11,10 +11,10 @@
 |
  */
 
-Route::get('/', function () {
-    return 'hello';
-    // return view('welcome');
-});
+// Route::get('/', function () {
+//     return 'hello';
+//     // return view('welcome');
+// });
 
 Route::get('/login/line', 'Login\LoginController@lineLogin'); // line 第三方登录
 Route::get('/login/line/callback', 'Login\LoginController@lineCallback'); // 登录之后的回调
