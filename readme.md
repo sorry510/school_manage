@@ -25,7 +25,6 @@ php artisan storage:link
 # 配置缓存
 php artisan route:cache
 php artisan config:cache
-php artisan view:cache
 
 # 清除缓存
 php artisan config:clear
