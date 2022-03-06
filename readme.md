@@ -13,6 +13,12 @@ cp .env.example .env
 
 ### 部署配置
 
+### 映射公共磁盘
+
+```
+php artisan storage:link
+```
+
 #### 缓存
 
 ```
