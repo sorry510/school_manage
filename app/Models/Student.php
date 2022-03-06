@@ -8,10 +8,10 @@ class Student extends Auth
 {
     use SoftDeletes;
 
-    const ONLINE = 1;
-    const OFFLINE = 2;
+    public const ONLINE = 1;
+    public const OFFLINE = 2;
 
-    const LINE_TYPE_TEXTS = [
+    public const LINE_TYPE_TEXTS = [
         self::ONLINE => '在线',
         self::OFFLINE => '离线',
     ];

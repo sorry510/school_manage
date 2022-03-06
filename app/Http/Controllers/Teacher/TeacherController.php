@@ -19,7 +19,6 @@ use Sorry510\Annotations\RequestParam;
 
 class TeacherController extends Controller
 {
-
     /**
      * @OA\post(
      *     tags={"教师"},

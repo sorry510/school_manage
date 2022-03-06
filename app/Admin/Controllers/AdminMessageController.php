@@ -34,9 +34,9 @@ class AdminMessageController extends AdminController
         $grid->column('column_not_in_table', '名称')->display(function () {
             if (!$this->teacher_id == 0) {
                 return Teacher::where('id', $this->teacher_id)->value('name');
-            } else if ($this->student_id) {
+            } elseif ($this->student_id) {
                 return Student::where('id', $this->student_id)->value('name');
-            } else if ($this->line_id != '') {
+            } elseif ($this->line_id != '') {
                 return LineUser::where('id', $this->line_id)->value('name');
             } else {
                 return '全体';
@@ -66,9 +66,9 @@ class AdminMessageController extends AdminController
         $show->field('name_', '名称')->display(function ($model) {
             if (!$model->teacher_id == 0) {
                 return Teacher::where('id', $model->teacher_id)->value('name');
-            } else if ($model->student_id) {
+            } elseif ($model->student_id) {
                 return Student::where('id', $model->student_id)->value('name');
-            } else if ($model->line_id != '') {
+            } elseif ($model->line_id != '') {
                 return LineUser::where('id', $model->line_id)->value('name');
             } else {
                 return '-';

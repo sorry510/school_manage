@@ -42,15 +42,15 @@ class SocketIoServer extends Command
     protected $ioPort; // socket-io port
     protected $innerHttpHost; // inner-http host
 
-    const HEART_COUNT = 3; // 心跳停止的次数
-    const HEART_HIT = 5; // 心跳间隔
+    public const HEART_COUNT = 3; // 心跳停止的次数
+    public const HEART_HIT = 5; // 心跳间隔
 
-    const TYPE_HEART = 'heart'; // 心跳
-    const TYPE_LOGIN = 'login'; // 登录
-    const TYPE_CHAT = 'chat'; // 交流
-    const TYPE_ONLINE = 'online'; // 在线情况
+    public const TYPE_HEART = 'heart'; // 心跳
+    public const TYPE_LOGIN = 'login'; // 登录
+    public const TYPE_CHAT = 'chat'; // 交流
+    public const TYPE_ONLINE = 'online'; // 在线情况
 
-    const ADMIN_MESSAGE = 'message'; // 后台推送消息
+    public const ADMIN_MESSAGE = 'message'; // 后台推送消息
 
     /**
      * Create a new command instance.
@@ -133,7 +133,7 @@ class SocketIoServer extends Command
                     if ($data['type'] === 'student') {
                         // 进入上线状态
                         Student::where('id', $data['id'])->update(['online' => Student::ONLINE]);
-                    } else if ($data['type'] === 'teacher') {
+                    } elseif ($data['type'] === 'teacher') {
                         Teacher::where('id', $data['id'])->update(['online' => Teacher::ONLINE]);
                     }
                 }
@@ -155,7 +155,7 @@ class SocketIoServer extends Command
                 if ($data['type'] === 'student') {
                     // 进入离线状态
                     Student::where('id', $data['id'])->update(['online' => Student::OFFLINE]);
-                } else if ($data['type'] === 'teacher') {
+                } elseif ($data['type'] === 'teacher') {
                     Teacher::where('id', $data['id'])->update(['online' => Teacher::OFFLINE]);
                 }
             }
@@ -196,7 +196,7 @@ class SocketIoServer extends Command
                             $info['teacher_id'] = $originator['id'];
                             $info['student_id'] = $data['id'];
                             $info['direction'] = StudentTeacherMessage::DIRECTION_TEACHER;
-                        } else if ($originator['type'] === 'student') {
+                        } elseif ($originator['type'] === 'student') {
                             $info['teacher_id'] = $data['id'];
                             $info['student_id'] = $originator['id'];
                             $info['direction'] = StudentTeacherMessage::DIRECTION_STUDENT;
@@ -324,7 +324,7 @@ class SocketIoServer extends Command
                     ]);
                     $message->status = AdminMessage::STATUS_ALL;
                     $message->save();
-                } else if ($message->type === AdminMessage::TYPE_TEACHER) {
+                } elseif ($message->type === AdminMessage::TYPE_TEACHER) {
                     // 教师推送,定向推送给接收人
                     $key = 'teacher' . $message->teacher_id;
                     if (isset($this->onlineUsers[$key])) {
@@ -336,7 +336,7 @@ class SocketIoServer extends Command
                         $message->status = AdminMessage::STATUS_ON;
                         $message->save();
                     }
-                } else if ($message->type === AdminMessage::TYPE_STUDENT) {
+                } elseif ($message->type === AdminMessage::TYPE_STUDENT) {
                     // 学生推送,定向推送给接收人
                     $key = 'student' . $message->student_id;
                     if (isset($this->onlineUsers[$key])) {
@@ -348,7 +348,7 @@ class SocketIoServer extends Command
                         $message->status = AdminMessage::STATUS_ON;
                         $message->save();
                     }
-                } else if ($message->type === AdminMessage::TYPE_LINE) {
+                } elseif ($message->type === AdminMessage::TYPE_LINE) {
                     // TODO 推送 line 用户
                 }
             }
@@ -359,5 +359,4 @@ class SocketIoServer extends Command
     {
         echo date('Y-m-d H:i:s') . ': ' . $data . PHP_EOL;
     }
-
 }

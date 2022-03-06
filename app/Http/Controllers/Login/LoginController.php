@@ -54,7 +54,7 @@ class LoginController extends Controller
             $data = [];
             if ($params['type'] === 'teacher') {
                 [$errorCode, $data] = $this->loginTeacher($params);
-            } else if ($params['type'] === 'student') {
+            } elseif ($params['type'] === 'student') {
                 [$errorCode, $data] = $this->loginStudent($params);
             } else {
                 $errorCode = ErrorCode::ERROR;
@@ -247,7 +247,7 @@ class LoginController extends Controller
                         'type' => $relation->type,
                         'name' => $teacher->name,
                     ];
-                } else if ($relation->type === LineUserRelation::TYPE_STUDENT) {
+                } elseif ($relation->type === LineUserRelation::TYPE_STUDENT) {
                     $student = Student::where('id', $relation->relation_id)->first();
                     $students[] = [
                         'line_user_id' => $relation->line_user_id,
@@ -320,7 +320,7 @@ class LoginController extends Controller
                     $type = 'teacher';
                     $token = $teacher->createToken($type, [$type]);
                     return $this->resJson(ErrorCode::SUCCESS, ['token' => $token->accessToken, 'type' => $type]);
-                } else if ($params['type'] == LineUserRelation::TYPE_STUDENT) {
+                } elseif ($params['type'] == LineUserRelation::TYPE_STUDENT) {
                     $student = Student::where('id', $params['relation_id'])->first();
                     $type = 'student';
                     $token = $student->createToken($type, [$type]);

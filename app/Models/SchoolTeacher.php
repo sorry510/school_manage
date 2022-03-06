@@ -4,10 +4,10 @@ namespace App\Models;
 
 class SchoolTeacher extends Base
 {
-    const TYPE_ADMIN = 1;
-    const TYPE_NORMAL = 2;
+    public const TYPE_ADMIN = 1;
+    public const TYPE_NORMAL = 2;
 
-    const TYPE_TEXTS = [
+    public const TYPE_TEXTS = [
         self::TYPE_ADMIN => '管理员',
         self::TYPE_NORMAL => '普通',
     ];
@@ -36,6 +36,5 @@ class SchoolTeacher extends Base
             }
         }
         return $query->get();
-
     }
 }

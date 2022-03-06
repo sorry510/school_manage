@@ -4,17 +4,17 @@ namespace App\Models;
 
 class SchoolApply extends Base
 {
-    const STATUS_SUCCESS = 1;
-    const STATUS_FAILED = 2;
-    const STATUS_PENDING = 3;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_FAILED = 2;
+    public const STATUS_PENDING = 3;
 
-    const STATUS_TEXTS = [
+    public const STATUS_TEXTS = [
         self::STATUS_SUCCESS => '成功',
         self::STATUS_FAILED => '拒绝',
         self::STATUS_PENDING => '申请中',
     ];
 
-    const STATUS_COLORS = [
+    public const STATUS_COLORS = [
         self::STATUS_SUCCESS => 'success',
         self::STATUS_FAILED => 'danger',
         self::STATUS_PENDING => 'info',

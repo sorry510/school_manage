@@ -7,7 +7,6 @@
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  */
 
-
 namespace App\Models{
 /**
  * Undocumented class
@@ -100,7 +99,9 @@ namespace App\Models{
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  */
-	class Auth extends \Eloquent {}
+    class Auth extends \Eloquent
+    {
+    }
 }
 
 namespace App\Models{
@@ -192,7 +193,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Query\Builder|$this withoutTrashed()
  * @mixin \Eloquent
  */
-	class Base extends \Eloquent {}
+    class Base extends \Eloquent
+    {
+    }
 }
 
 namespace App\Models{
@@ -219,7 +222,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Teacher whereRemark($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Teacher whereUpdatedAt($value)
  */
-	class Teacher extends \Eloquent {}
+    class Teacher extends \Eloquent
+    {
+    }
 }
 
 namespace App{
@@ -244,6 +249,7 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
  */
-	class User extends \Eloquent {}
+    class User extends \Eloquent
+    {
+    }
 }
-

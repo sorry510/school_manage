@@ -98,9 +98,9 @@ class Base extends BaseModel
     // 自定义主键
     protected $primaryKey = 'id';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-    const DELETED_AT = 'deleted_at';
+    public const CREATED_AT = 'created_at';
+    public const UPDATED_AT = 'updated_at';
+    public const DELETED_AT = 'deleted_at';
 
     protected $guarded = [];
 

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Mail;
 
 class TeacherObserver
 {
-
     /**
      * @return void
      */
