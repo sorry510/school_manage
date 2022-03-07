@@ -64,8 +64,9 @@
         ],
         "post-install-cmd":[
             "chmod -R 777 storage",
-            "php artisan config:cache",
             "php artisan passport:keys",
+            "chmod -R 777 bootstrap/cache",
+            "php artisan config:cache",
             "php artisan route:cache"
         ],
         "post-create-project-cmd": [
