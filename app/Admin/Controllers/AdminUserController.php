@@ -2,8 +2,10 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Models\Admin;
 use Encore\Admin\Controllers\UserController;
 use Encore\Admin\Form;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends UserController
@@ -31,7 +33,14 @@ class AdminUserController extends UserController
 
         $form->text('name', trans('admin.name'))->rules('required');
         $form->image('avatar', trans('admin.avatar'));
-        $form->multipleImage('imgs', '图片列表')->removable(); // 多选图片
+
+        $userId = request()->route()->parameter('user');
+        $options = [];
+        if ($userId) {
+            $options["uploadUrl"] = '/admin/auth/users/files/' . $userId;
+        }
+        $form->multipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片
+
         $form->password('password', trans('admin.password'))->rules('required|confirmed');
         $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
             ->default(function ($form) {
@@ -53,5 +62,50 @@ class AdminUserController extends UserController
         });
 
         return $form;
+    }
+
+    public function updateFile(Request $request, $id = null)
+    {
+        $imgs = $request->file('imgs');
+        $file_id = $request->file_id;
+        $data = [];
+        if (!empty($imgs)) {
+            $path = $imgs[0]->store('images', 'admin');
+            $data[$file_id] = $path;
+        }
+        $user = Admin::where('id', $id)->first();
+        $newImgs = array_merge($user->imgs, $data);
+        $user->imgs = $newImgs;
+        $user->save();
+
+        $url = config('filesystems.disks.admin.url');
+        $img = end($newImgs);
+        $key = key($newImgs);
+        return [
+            'initialPreview' => [
+                "{$url}/$img", // 预览地址
+            ],
+            'initialPreviewConfig' => [
+                [
+                    "caption" => pathinfo($img)['basename'],
+                    "key" => $key,
+                    "url" => "/admin/auth/users/{$id}", // 删除接口
+                    "downloadUrl" => "{$url}/$img", // 下载地址
+                ],
+            ],
+            'append' => true,
+        ];
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update($id)
+    {
+        return $this->form()->update($id);
     }
 }

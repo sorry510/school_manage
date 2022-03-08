@@ -19,6 +19,8 @@ Route::group([
     $router->resource('students', StudentController::class);
     $router->resource('admin-messages', AdminMessageController::class);
 
+    $router->post('auth/users/files/{user}', 'AdminUserController@updateFile'); // 上传文件
+
     $router->resource('auth/users', AdminUserController::class)->names('admin.auth.users'); // 重写管理员相关的控制器
     $router->resource('auth/roles', AdminRoleController::class)->names('admin.auth.roles'); // 重写角色相关的控制器
 });
