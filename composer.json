@@ -65,7 +65,7 @@
         "post-install-cmd":[
             "php artisan cache:clear",
             "chmod -R 777 storage",
-            "php artisan passport:keys"
+            "php artisan passport:move"
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate"
