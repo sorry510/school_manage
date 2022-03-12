@@ -1,5 +1,8 @@
 <?php
 
+use App\Admin\Extensions\MyMultipleImage;
+use Encore\Admin\Form;
+
 /**
  * Laravel-admin - admin builder based on Laravel.
  * @author z-song <https://github.com/z-song>
@@ -19,4 +22,5 @@
  */
 
 Encore\Admin\Form::forget(['map', 'editor']);
+Form::extend('myMultipleImage', MyMultipleImage::class);
 Admin::css('/css/my.css'); // 自定义css

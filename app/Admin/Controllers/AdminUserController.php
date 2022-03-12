@@ -39,7 +39,9 @@ class AdminUserController extends UserController
         if ($userId) {
             $options["uploadUrl"] = '/admin/auth/users/files/' . $userId;
         }
-        $form->multipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片
+        $form->myMultipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片(改)
+
+        // $form->multipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片
 
         $form->password('password', trans('admin.password'))->rules('required|confirmed');
         $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
