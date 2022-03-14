@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Models\Admin;
+use Encore\Admin\Admin as EncoreAdmin;
 use Encore\Admin\Controllers\UserController;
 use Encore\Admin\Form;
 use Illuminate\Http\Request;
@@ -17,6 +18,9 @@ class AdminUserController extends UserController
      */
     public function form()
     {
+        $script = file_get_contents(resource_path('assets/js/functions/inputfile.js'));
+        EncoreAdmin::script($script); // 方法1 单独引用
+
         $userModel = config('admin.database.users_model');
         $permissionModel = config('admin.database.permissions_model');
         $roleModel = config('admin.database.roles_model');
@@ -39,9 +43,9 @@ class AdminUserController extends UserController
         if ($userId) {
             $options["uploadUrl"] = '/admin/auth/users/files/' . $userId;
         }
-        $form->myMultipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片(改)
+        // $form->myMultipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片(改)
 
-        // $form->multipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片
+        $form->multipleImage('imgs', '图片列表')->options($options)->removable(); // 多选图片
 
         $form->password('password', trans('admin.password'))->rules('required|confirmed');
         $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
