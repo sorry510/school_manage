@@ -14,6 +14,7 @@ use App\Models\StudentTeacherLike;
 use App\Models\StudentTeacherMessage;
 use App\Models\Teacher;
 use App\Models\TeacherMail;
+use App\Models\TeacherMessage;
 use Illuminate\Http\Request;
 use Sorry510\Annotations\RequestParam;
 
@@ -658,6 +659,92 @@ class TeacherController extends Controller
         $user = $request->user();
         $params['teacher_id'] = $user->id;
         $result = AdminMessage::getMessage($params);
+        return $this->resJson(ErrorCode::SUCCESS, $result);
+    }
+
+    /**
+     * @OA\post(
+     *     tags={"教师"},
+     *     path="/api/teacher/messages",
+     *     summary="发送消息通知",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="student_ids", type="array", description="学生ids", @OA\Items(type="integer")),
+     *                 @OA\Property(property="content", type="string", description="内容"),
+     *                 required={"student_ids", "content"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="信息"),
+     *         @OA\Property(property="data", type="object", description="返回数据"),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳")
+     *     ))
+     * )
+     */
+    public function sendMessage(Request $request)
+    {
+        $params = $request->only("student_ids", "content");
+        $user = $request->user('teachers');
+        try {
+            $student_ids = $params['student_ids'];
+            foreach ($student_ids as $student_id) {
+                TeacherMessage::create([
+                    'teacher_id' => $user->id,
+                    'student_id' => $student_id,
+                    'content' => $params['content'],
+                    'status' => TeacherMessage::STATUS_OFF,
+                ]);
+            }
+            return $this->resJson(ErrorCode::SUCCESS);
+        } catch (\Throwable $e) {
+            return $this->resJson(ErrorCode::ERROR, $e->getMessage());
+        }
+    }
+
+    /**
+     * @OA\get(
+     *     tags={"教师"},
+     *     path="/api/teacher/messages",
+     *     summary="我发送的消息通知",
+     *     @OA\Parameter(name="search", in="query", description="搜索"),
+     *     @OA\Parameter(name="page", in="query", description="每页数量"),
+     *     @OA\Parameter(name="limit", in="query", description="每页数量"),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(
+     *         @OA\Property(property="code", type="integer", description="返回码"),
+     *         @OA\Property(property="message", type="string", description="错误信息"),
+     *         @OA\Property(property="data", type="object", description="返回数据",
+     *             @OA\Property(property="meta", type="object", description="元信息",
+     *                 @OA\Property(property="count", type="integer", description="当前页的项目数"),
+     *                 @OA\Property(property="perPage", type="integer", description="每页显示的项目数"),
+     *                 @OA\Property(property="currentPage", type="integer", description="当前页码"),
+     *                 @OA\Property(property="lastPage", type="integer", description="最后一页的页码"),
+     *                 @OA\Property(property="total", type="integer", description="总数")
+     *             ),
+     *             @OA\Property(property="list", type="array", description="数据列表", @OA\Items(type="object",
+     *                 @OA\Property(property="id", type="integer", description="唯一标识"),
+     *                 @OA\Property(property="content", type="string", description="内容"),
+     *                 @OA\Property(property="teacher_name", type="string", description="教师"),
+     *                 @OA\Property(property="student_name", type="string", description="学生"),
+     *                 @OA\Property(property="created_at", type="string", description="创建时间")
+     *             ))
+     *         ),
+     *         @OA\Property(property="timestamp", type="integer", description="服务器响应的时间戳"),
+     *         required={"code", "message", "data", "timestamp"}
+     *     ))
+     * )
+     *
+     * @RequestParam(fields={"page": 1, "limit": 10 })
+     */
+    public function getMySendMessage(Request $request)
+    {
+        $params = $request->only("search", "page", "limit");
+        $user = $request->user();
+        $params['teacher_id'] = $user->id;
+        $result = TeacherMessage::getMessage($params);
         return $this->resJson(ErrorCode::SUCCESS, $result);
     }
 }

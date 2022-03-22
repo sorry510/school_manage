@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Admin\Extensions;
 
 use Encore\Admin\Form\Field\MultipleImage;
 
 class MyMultipleImage extends MultipleImage
 {
-
     /**
      * {@inheritdoc}
      */
@@ -84,5 +84,4 @@ AUTO_UPLOAD_SCRIPT;
 $("input{$this->getElementClassSelector()}").parent().parent().parent().parent().find(".fileinput-remove").css({"display": "none"});
 HIDE_RIGHT_DELETE;
     }
-
 }

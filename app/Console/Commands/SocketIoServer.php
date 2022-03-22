@@ -6,6 +6,7 @@ use App\Models\AdminMessage;
 use App\Models\Student;
 use App\Models\StudentTeacherMessage;
 use App\Models\Teacher;
+use App\Models\TeacherMessage;
 use Illuminate\Console\Command;
 use PHPSocketIO\SocketIO;
 use Workerman\Lib\Timer;
@@ -51,6 +52,8 @@ class SocketIoServer extends Command
     public const TYPE_ONLINE = 'online'; // 在线情况
 
     public const ADMIN_MESSAGE = 'message'; // 后台推送消息
+
+    public const TEACHER_MESSAGE = 'message'; // 教师推送消息
 
     /**
      * Create a new command instance.
@@ -253,9 +256,14 @@ class SocketIoServer extends Command
     {
         if ($worker->id === 0) {
             // 只在第一个 worker 进程中执行，避免并发问题
-            $this->onlineUsers();
-            $this->pushAdminMessage();
-            // $this->createInnerHttp(); // TODO 不知道如何在heroku中开启2个端口，暂停用
+            try {
+                $this->onlineUsers();
+                $this->pushAdminMessage();
+                $this->pushTeacherMessage();
+                // $this->createInnerHttp(); // TODO 不知道如何在heroku中开启2个端口，暂停用
+            } catch (\Throwable $e) {
+                $this->log($e->getMessage());
+            }
         }
     }
 
@@ -282,7 +290,6 @@ class SocketIoServer extends Command
                 if (empty($data)) {
                     $data = $request->get();
                 }
-                dump($data);
                 try {
                     $to = $data['to'] ?? 0;
                     $content = $data['content'];
@@ -350,6 +357,39 @@ class SocketIoServer extends Command
                     }
                 } elseif ($message->type === AdminMessage::TYPE_LINE) {
                     // TODO 推送 line 用户
+                }
+            }
+        });
+    }
+
+    /**
+     * 推送教师发送的信息
+     * @Author sorry510 491559675@qq.com
+     * @DateTime 2022-02-28
+     *
+     * @return void
+     */
+    public function pushTeacherMessage()
+    {
+        $timeInterval = 3;
+        Timer::add($timeInterval, function () {
+            $messages = TeacherMessage::where('teacher_message.status', TeacherMessage::STATUS_OFF)
+                ->select('teacher_message.id', 'teacher_message.student_id', 'teacher_message.content', 'teacher.name as teacher_name')
+                ->leftJoin('teacher', 'teacher.id', '=', 'teacher_message.teacher_id')
+                ->get();
+            foreach ($messages as $message) {
+                $key = 'student' . $message->student_id;
+                dump($key);
+                if (isset($this->onlineUsers[$key])) {
+                    // 在线时，再推送，同时更改状态
+                    $this->io->to($key)->emit(self::TEACHER_MESSAGE, [
+                        'id' => $message->id,
+                        'content' => $message->content,
+                        'teacher' => $message->teacher_name,
+                    ]);
+                    TeacherMessage::where('id', $message->id)->update([
+                        'status' => TeacherMessage::STATUS_ON,
+                    ]);
                 }
             }
         });

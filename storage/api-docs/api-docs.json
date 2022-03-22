@@ -926,6 +926,125 @@
                 }
             }
         },
+        "/api/student/messages": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "我发送的消息通知",
+                "operationId": "App\\Http\\Controllers\\Student\\StudentController::getTeacherMessageList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "搜索"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "content": {
+                                                                "description": "内容",
+                                                                "type": "string"
+                                                            },
+                                                            "teacher_name": {
+                                                                "description": "教师",
+                                                                "type": "string"
+                                                            },
+                                                            "student_name": {
+                                                                "description": "学生",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/teacher/info": {
             "get": {
                 "tags": [
@@ -2231,6 +2350,188 @@
                                                     }
                                                 }
                                             },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teacher/messages": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "我发送的消息通知",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::getMySendMessage",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "搜索"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "content": {
+                                                                "description": "内容",
+                                                                "type": "string"
+                                                            },
+                                                            "teacher_name": {
+                                                                "description": "教师",
+                                                                "type": "string"
+                                                            },
+                                                            "student_name": {
+                                                                "description": "学生",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "发送消息通知",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::sendMessage",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "student_ids",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "student_ids": {
+                                        "description": "学生ids",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "content": {
+                                        "description": "内容",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
                                             "type": "object"
                                         },
                                         "timestamp": {

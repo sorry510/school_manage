@@ -37,6 +37,9 @@ Route::middleware(['auth:teachers', 'scope:teacher'])->prefix('teacher')->group(
     Route::get('students', 'Teacher\\TeacherController@getStudentList'); // 学生列表
     Route::get('students-follow', 'Teacher\\TeacherController@getFollowStudentList'); // 被关注的学生列表
 
+    Route::post('messages', 'Teacher\\TeacherController@sendMessage'); // 发送消息通知
+    Route::get('messages', 'Teacher\\TeacherController@getMySendMessage'); // 获取教师发出的消息通知
+
     Route::get('chat-messages', 'Teacher\\TeacherController@getMessageList'); // 聊天记录
 
     Route::get('admin-messages', 'Teacher\\TeacherController@getAdminMessageList'); // 管理员推送消息
@@ -54,6 +57,8 @@ Route::middleware(['auth:students', 'scope:student'])->prefix('student')->group(
     Route::get('teachers', 'Student\\StudentController@getTeacherList'); // 教师列表
     Route::post('like', 'Student\\StudentController@like'); // 关注教师
     Route::post('unlike', 'Student\\StudentController@unlike'); // 取消关注教师
+
+    Route::get('messages', 'Student\\StudentController@getTeacherMessageList'); // 获取教师发送的消息通知
 
     Route::get('chat-messages', 'Student\\StudentController@getMessageList'); // 聊天记录
 
