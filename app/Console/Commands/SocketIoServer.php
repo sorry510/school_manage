@@ -379,7 +379,6 @@ class SocketIoServer extends Command
                 ->get();
             foreach ($messages as $message) {
                 $key = 'student' . $message->student_id;
-                dump($key);
                 if (isset($this->onlineUsers[$key])) {
                     // 在线时，再推送，同时更改状态
                     $this->io->to($key)->emit(self::TEACHER_MESSAGE, [
