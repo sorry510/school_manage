@@ -125,6 +125,8 @@ return [
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
+    'teacher_auto_active' => env('TEACHER_AUTO_ACTIVE', true),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

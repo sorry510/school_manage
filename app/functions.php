@@ -22,7 +22,7 @@ if (!function_exists('resJson')) {
         if ($msg === '') {
             // 默认填充标准错误信息
             $msg = getConstMessage($code);
-        } else if (!is_string($msg)) {
+        } elseif (!is_string($msg)) {
             // 将msg改为data用，msg为充标准错误信息
             $data = $msg;
             $msg = getConstMessage($code);
@@ -72,9 +72,8 @@ if (!function_exists('get_time')) {
     {
         if (is_numeric($time)) {
             return (int) str_pad($time, 13, "0", STR_PAD_RIGHT);
-        } else {
-            return strtotime($time) * 1000;
         }
+        return strtotime($time) * 1000;
     }
 }
 
@@ -89,9 +88,8 @@ if (!function_exists('time_format')) {
     {
         if (is_numeric($time)) {
             return date($format, substr($time, 0, 10));
-        } else {
-            return $time;
         }
+        return $time;
     }
 }
 
@@ -130,9 +128,6 @@ if (!function_exists('is_effective')) {
      */
     function is_effective($param, $key)
     {
-        if (isset($param[$key]) && strlen($param[$key]) > 0) {
-            return true;
-        }
-        return false;
+        return isset($param[$key]) && strlen($param[$key]) > 0;
     }
 }

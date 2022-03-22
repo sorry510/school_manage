@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\AdminMessage;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Observers\AdminMessageObserver;
 use App\Observers\StudentObserver;
 use App\Observers\TeacherObserver;
 use Illuminate\Support\Collection;
@@ -18,8 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (!defined('APP_URL')) {
+            define('APP_URL', config('app.url'));
+        }
         Teacher::observe(TeacherObserver::class);
         Student::observe(StudentObserver::class);
+        AdminMessage::observe(AdminMessageObserver::class);
     }
 
     /**

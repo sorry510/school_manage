@@ -4,10 +4,10 @@ namespace App\Models;
 
 class SchoolTeacher extends Base
 {
-    const TYPE_ADMIN = 1;
-    const TYPE_NORMAL = 2;
+    public const TYPE_ADMIN = 1;
+    public const TYPE_NORMAL = 2;
 
-    const TYPE_TEXTS = [
+    public const TYPE_TEXTS = [
         self::TYPE_ADMIN => '管理员',
         self::TYPE_NORMAL => '普通',
     ];
@@ -22,13 +22,19 @@ class SchoolTeacher extends Base
             ->first();
     }
 
-    public static function getSchoolTeachers($school_id)
+    public static function getSchoolTeachers($school_ids)
     {
-        return self::where('school_id', $school_id)
-            ->leftJoin('teacher', 'teacher.id', '=', 'school_teacher.teacher_id')
-            ->select('teacher.id', 'teacher.name', 'teacher.email', 'school_teacher.teacher_type')
+        $query = self::leftJoin('teacher', 'teacher.id', '=', 'school_teacher.teacher_id')
+            ->select('teacher.id', 'teacher.name', 'teacher.email', 'school_teacher.school_id', 'school_teacher.teacher_type')
             ->orderBy('school_teacher.teacher_type', 'asc')
-            ->orderBy('school_teacher.id', 'asc')
-            ->get();
+            ->orderBy('school_teacher.id', 'asc');
+        if (!empty($school_ids)) {
+            if (is_array($school_ids)) {
+                $query->whereIn('school_id', $school_ids);
+            } elseif (is_numeric($school_ids)) {
+                $query->where('school_id', $school_ids);
+            }
+        }
+        return $query->get();
     }
 }

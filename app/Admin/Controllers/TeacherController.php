@@ -73,13 +73,19 @@ class TeacherController extends AdminController
         $form = new Form(new Teacher());
 
         $form->text('name', '姓名')->required();
-        $form->email('email', __('common.email'))->required();
-        $form->text('password', '密码')->rules(function ($form) {
-            if ($form->isCreating()) {
-                return 'required';
-            }
-            return '';
-        });
+        $form->email('email', __('common.email'))
+            ->creationRules(['required', "unique:teacher"], [
+                'required' => '邮箱必填',
+                'unique' => '邮箱已经被使用',
+            ])
+            ->updateRules(['required', "unique:teacher,email,{{id}}"], [
+                'required' => '邮箱必填',
+                'unique' => '邮箱已经被使用',
+            ]);
+
+        $form->text('password', '密码')->creationRules('required', [
+            'required' => '密码必填',
+        ]);
         $form->select('status', __('common.status'))->options(Teacher::STATUS_TEXTS)->default(Teacher::STATUS_ACTIVE)->required();
         $form->text('remark', __('common.remark'));
 

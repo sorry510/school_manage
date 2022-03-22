@@ -74,13 +74,16 @@ class StudentController extends AdminController
         $form = new Form(new Student());
 
         $form->text('name', '姓名')->required();
-        $form->text('account', '用户名')->required();
-        $form->password('password', __('Password'))->rules(function ($form) {
-            if ($form->isCreating()) {
-                return 'required';
-            }
-            return '';
-        });
+        $form->text('account', '用户名')
+            ->creationRules(['required', "unique:student"], [
+                'required' => '用户名必填',
+                'unique' => '用户名已经被使用',
+            ])
+            ->updateRules(['required', "unique:student,account,{{id}}"], [
+                'required' => '用户名必填',
+                'unique' => '用户名已经被使用',
+            ]);
+        $form->password('password', __('Password'))->creationRules('required');
         $schools = School::select('id', 'name')->get()->mapWithKeys(function ($item) {
             return [
                 $item['id'] => $item['name'],
@@ -102,9 +105,6 @@ class StudentController extends AdminController
     public function update($id)
     {
         $data = request()->all();
-        if (empty($data['password'])) {
-            unset($data['password']);
-        }
         return $this->form()->update($id, $data);
     }
 }

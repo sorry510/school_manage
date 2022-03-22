@@ -5,6 +5,11 @@
         "description": "教务系统接口文档",
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
     "paths": {
         "/api/login-in": {
             "post": {
@@ -193,6 +198,83 @@
                 }
             }
         },
+        "/api/line/login-in": {
+            "post": {
+                "tags": [
+                    "用户认证"
+                ],
+                "summary": "LINE用户登录",
+                "operationId": "App\\Http\\Controllers\\Login\\LoginController::handleLineLogin",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "line_id",
+                                    "relation_id",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "line_id": {
+                                        "description": "line_id",
+                                        "type": "string"
+                                    },
+                                    "relation_id": {
+                                        "description": "relation_id",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "类型",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "token": {
+                                                    "description": "用户token",
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "description": "类型",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/student/info": {
             "get": {
                 "tags": [
@@ -249,6 +331,63 @@
                                                     "type": "string"
                                                 }
                                             },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/student/bind-line": {
+            "post": {
+                "tags": [
+                    "学生"
+                ],
+                "summary": "绑定line",
+                "operationId": "App\\Http\\Controllers\\Student\\IndexController::bindStudent",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "line_id"
+                                ],
+                                "properties": {
+                                    "line_id": {
+                                        "description": "line_id",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
                                             "type": "object"
                                         },
                                         "timestamp": {
@@ -428,6 +567,10 @@
                                                 "school_remark": {
                                                     "description": "学校备注",
                                                     "type": "string"
+                                                },
+                                                "hasBindLine": {
+                                                    "description": "是否已绑定line",
+                                                    "type": "bool"
                                                 },
                                                 "created_at": {
                                                     "description": "创建时间",
@@ -672,6 +815,236 @@
                 }
             }
         },
+        "/api/student/admin-messages": {
+            "get": {
+                "tags": [
+                    "学生"
+                ],
+                "summary": "管理员推送消息",
+                "operationId": "App\\Http\\Controllers\\Student\\StudentController::getAdminMessageList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "搜索"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "content": {
+                                                                "description": "内容",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/student/messages": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "我发送的消息通知",
+                "operationId": "App\\Http\\Controllers\\Student\\StudentController::getTeacherMessageList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "搜索"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "content": {
+                                                                "description": "内容",
+                                                                "type": "string"
+                                                            },
+                                                            "teacher_name": {
+                                                                "description": "教师",
+                                                                "type": "string"
+                                                            },
+                                                            "student_name": {
+                                                                "description": "学生",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/teacher/info": {
             "get": {
                 "tags": [
@@ -728,6 +1101,63 @@
                                                     "type": "string"
                                                 }
                                             },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teacher/bind-line": {
+            "post": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "绑定line",
+                "operationId": "App\\Http\\Controllers\\Teacher\\IndexController::bindTeacher",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "line_id"
+                                ],
+                                "properties": {
+                                    "line_id": {
+                                        "description": "line_id",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
                                             "type": "object"
                                         },
                                         "timestamp": {
@@ -1181,7 +1611,7 @@
                     {
                         "name": "teacher_id",
                         "in": "query",
-                        "description": "学校id"
+                        "description": "教师id"
                     },
                     {
                         "name": "school_id",
@@ -1191,37 +1621,33 @@
                     {
                         "name": "secret",
                         "in": "query",
-                        "description": "学校id"
+                        "description": "secret"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "code": {
-                                            "description": "返回码",
-                                            "type": "integer"
-                                        },
-                                        "message": {
-                                            "description": "信息",
-                                            "type": "string"
-                                        },
-                                        "data": {
-                                            "description": "返回数据",
-                                            "type": "object"
-                                        },
-                                        "timestamp": {
-                                            "description": "服务器响应的时间戳",
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/teacher/register-active": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "教师账号激活",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::registerActive",
+                "parameters": [
+                    {
+                        "name": "teacher_id",
+                        "in": "query",
+                        "description": "教师id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
                     }
                 }
             }
@@ -1826,6 +2252,310 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/teacher/admin-messages": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "管理员推送消息",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::getAdminMessageList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "搜索"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "content": {
+                                                                "description": "内容",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/teacher/messages": {
+            "get": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "我发送的消息通知",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::getMySendMessage",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "搜索"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "每页数量"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "每页数量"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "code",
+                                        "message",
+                                        "data",
+                                        "timestamp"
+                                    ],
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "错误信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "properties": {
+                                                "meta": {
+                                                    "description": "元信息",
+                                                    "properties": {
+                                                        "count": {
+                                                            "description": "当前页的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "perPage": {
+                                                            "description": "每页显示的项目数",
+                                                            "type": "integer"
+                                                        },
+                                                        "currentPage": {
+                                                            "description": "当前页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "lastPage": {
+                                                            "description": "最后一页的页码",
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "description": "总数",
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "list": {
+                                                    "description": "数据列表",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "唯一标识",
+                                                                "type": "integer"
+                                                            },
+                                                            "content": {
+                                                                "description": "内容",
+                                                                "type": "string"
+                                                            },
+                                                            "teacher_name": {
+                                                                "description": "教师",
+                                                                "type": "string"
+                                                            },
+                                                            "student_name": {
+                                                                "description": "学生",
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "description": "创建时间",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "教师"
+                ],
+                "summary": "发送消息通知",
+                "operationId": "App\\Http\\Controllers\\Teacher\\TeacherController::sendMessage",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "student_ids",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "student_ids": {
+                                        "description": "学生ids",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "content": {
+                                        "description": "内容",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "description": "返回码",
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "description": "信息",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "返回数据",
+                                            "type": "object"
+                                        },
+                                        "timestamp": {
+                                            "description": "服务器响应的时间戳",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "Authorization-Bearer": {
+                "type": "http",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "Bearer"
             }
         }
     }

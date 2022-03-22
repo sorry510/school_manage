@@ -57,11 +57,11 @@ return [
 
         'pgsql_heroku' => [
             'driver' => 'pgsql',
-            'host' => $DATABASE_URL["host"],
-            'port' => $DATABASE_URL["port"],
-            'database' => ltrim($DATABASE_URL["path"], "/"),
-            'username' => $DATABASE_URL["user"],
-            'password' => $DATABASE_URL["pass"],
+            'host' => $DATABASE_URL["host"] ?? '127.0.0.1',
+            'port' => $DATABASE_URL["port"] ?? '5432',
+            'database' => ltrim($DATABASE_URL["path"] ?? 'test', "/"),
+            'username' => $DATABASE_URL["user"] ?? 'postgres',
+            'password' => $DATABASE_URL["pass"] ?? 'postgres',
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',

@@ -11,3 +11,5 @@ yarn-error.log
 .env
 .rnd
 *.log
+storage/oauth-private.key
+storage/oauth-public.key

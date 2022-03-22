@@ -177,7 +177,7 @@ return [
 
         // User tables and model.
         'users_table' => 'admin_users',
-        'users_model' => Encore\Admin\Auth\Database\Administrator::class,
+        'users_model' => App\Admin\Models\Admin::class,
 
         // Role table and model.
         'roles_table' => 'admin_roles',

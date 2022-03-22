@@ -97,7 +97,8 @@ use Laravel\Passport\HasApiTokens;
  */
 class Auth extends User
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens;
+    use Notifiable;
 
     /**
      * The attributes that should be hidden for arrays.

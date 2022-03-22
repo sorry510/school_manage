@@ -9,11 +9,11 @@ class StudentTeacherMessage extends Base
     /**
      * @var string 教师to学生
      */
-    const DIRECTION_TEACHER = 1;
+    public const DIRECTION_TEACHER = 1;
     /**
      * @var string 学生to教师
      */
-    const DIRECTION_STUDENT = 2;
+    public const DIRECTION_STUDENT = 2;
 
     public static function getMessage($params)
     {

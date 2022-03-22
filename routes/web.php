@@ -11,23 +11,15 @@
 |
  */
 
-Route::get('/', function () {
-    return 'hello';
-    // return view('welcome');
-});
+// Route::get('/', function () {
+//     return 'hello';
+//     // return view('welcome');
+// });
 
-Route::get('/login/line', 'Login\LoginController@lineLogin');
-Route::get('/login/line/callback', 'Login\LoginController@lineCallback');
+Route::get('/login/line', 'Login\LoginController@lineLogin'); // line 第三方登录
+Route::get('/login/line/callback', 'Login\LoginController@lineCallback'); // 登录之后的回调
 
-Route::get('/swagger', '\L5Swagger\Http\Controllers\SwaggerController@api');
-
-// Route::get('/login', function () {
-//     return view('welcome');
-// })->name('login');
-
-// Route::get('/login2', function () {
-//     return view('welcome');
-// })->name('register');
+Route::get('/swagger', '\L5Swagger\Http\Controllers\SwaggerController@api'); // swagger 文档预览
 
 // Route::get('/redirect', function (Request $request) {
 //     $request->session()->put('state', $state = Str::random(40));

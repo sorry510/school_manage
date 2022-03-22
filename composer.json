@@ -19,6 +19,7 @@
         "laravel/socialite": "v3.*",
         "laravel/tinker": "~1.0",
         "lcobucci/jwt": "3.3.3",
+        "linecorp/line-bot-sdk": "^7.3",
         "socialiteproviders/line": "v2.*",
         "sorry510/annotation": "^0.0.1",
         "sorry510/constant": "^0.0.1",
@@ -60,6 +61,11 @@
     "scripts": {
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-install-cmd":[
+            "php artisan cache:clear",
+            "chmod -R 777 storage",
+            "php artisan passport:move"
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate"

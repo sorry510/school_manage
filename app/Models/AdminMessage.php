@@ -6,24 +6,24 @@ class AdminMessage extends Base
 {
     protected $table = 'admin_message';
 
-    const TYPE_ALL = 1;
-    const TYPE_TEACHER = 2;
-    const TYPE_STUDENT = 3;
-    const TYPE_LINE = 4;
+    public const TYPE_ALL = 1;
+    public const TYPE_TEACHER = 2;
+    public const TYPE_STUDENT = 3;
+    public const TYPE_LINE = 4;
 
-    const TYPE_TEXTS = [
+    public const TYPE_TEXTS = [
         self::TYPE_ALL => '广播',
         self::TYPE_TEACHER => '教师',
         self::TYPE_STUDENT => '学生',
         self::TYPE_LINE => 'line用户',
     ];
 
-    const STATUS_ON = 1;
-    const STATUS_OFF = 2;
-    const STATUS_ALL = 3;
+    public const STATUS_ON = 1;
+    public const STATUS_OFF = 2;
+    public const STATUS_ALL = 3;
 
-    const STATUS_TEXTS = [
-        self::STATUS_ON => '已接受',
+    public const STATUS_TEXTS = [
+        self::STATUS_ON => '已接收',
         self::STATUS_OFF => '未接收',
         self::STATUS_ALL => '-',
     ];

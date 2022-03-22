@@ -11,7 +11,10 @@
 登陆中...
 <script>
     window.onload = function () {
-        window.opener.postMessage("{{!! $result !!}}", "{{ $domain }}");
+        var data = @json($result);
+        if (window.opener) {
+            window.opener.postMessage(JSON.stringify(data), "{{ $domain }}");
+        }
         window.close();
     }
 </script>

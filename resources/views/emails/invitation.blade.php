@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>mail</title>
+        <title>学校邀请</title>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
